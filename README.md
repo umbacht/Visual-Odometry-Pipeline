@@ -1,5 +1,5 @@
 # Visual-Odometry-Pipeline
-Mini-Project Vision Algorithms for Mobile Robots
+Mini-Project Vision Algorithms for Mobile Robotics
 
 Relative path for datasets:
 1. "../datasets/kitti/"
