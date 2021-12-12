@@ -1,5 +1,9 @@
+
+parking_path = 'parking';
+addpath('parking');
+addpath('otherCode')
 %% Setup
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking
+ds = 2; % 0: KITTI, 1: Malaga, 2: parking
 
 if ds == 0
     % need to set kitti_path to folder containing "05" and "poses"
@@ -34,11 +38,13 @@ end
 
 %% Bootstrap
 % need to set bootstrap_frames
+bootstrap_frames = [1, 4];
+
 if ds == 0
     img0 = imread([kitti_path '/05/image_0/' ...
         sprintf('%06d.png',bootstrap_frames(1))]);
     img1 = imread([kitti_path '/05/image_0/' ...
-        sprintf('%06d.png',bootstrap_frames(3))]);
+        sprintf('%06d.png',bootstrap_frames(2))]);
 elseif ds == 1
     img0 = rgb2gray(imread([malaga_path ...
         '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
@@ -54,13 +60,10 @@ elseif ds == 2
 else
     assert(false);
 end
+%%
 
 
-
-
-
-
-
+[P1,X1, C1, F1, T1] = initialization(img0, img1, K);
 
 %% Continuous operation
 range = (bootstrap_frames(2)+1):last_frame;

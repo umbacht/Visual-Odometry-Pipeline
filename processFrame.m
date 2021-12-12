@@ -21,6 +21,7 @@ function [S_crt, T_WC_crt] = processFrame(image_crt, image_prv, S_prv, parameter
     % PointTracker set values
     % estimateFundamentalMatrix set value
     % Check transformation CW or WC
+    % Check if E is unique
 
 %   Paremeterlist:
     % Kameraintrinsics K
@@ -63,7 +64,6 @@ function [S_crt, T_WC_crt] = processFrame(image_crt, image_prv, S_prv, parameter
     S_crt.C = S_prv.C;
     S_crt.F = S_prv.F;
     S_crt.T = S_prv.T;
-    
-
+   
 
 end
