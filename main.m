@@ -1,15 +1,29 @@
 
-parking_path = 'parking';
-addpath('parking');
-addpath('otherCode')
+% parking_path = 'parking';
+% kitti_path = 'kitti';
+% malaga_path = 'malaga';
+kitti_path = "../datasets/kitti";
+malaga_path = "../datasets/malaga-urban-dataset-extract-07";
+parking_path = "../datasets/parking";
+
+
+addpath(kitti_path);
+addpath(parking_path);
+addpath(malaga_path)
+addpath('Exercise Solutions/Solution 3 - Simple Keypoint Tracker/');
+addpath('Exercise Solutions/Solution 6 - Two-view Geometry/');
+addpath('Exercise Solutions/Solution 7 - From images to localization/');
+
+
+
 %% Setup
-ds = 2; % 0: KITTI, 1: Malaga, 2: parking
+ds = 0; % 0: KITTI, 1: Malaga, 2: parking
 
 if ds == 0
     % need to set kitti_path to folder containing "05" and "poses"
     assert(exist('kitti_path', 'var') ~= 0);
-    ground_truth = load([kitti_path '/poses/05.txt']);
-    ground_truth = ground_truth(:, [end-8 end]);
+    %ground_truth = load([kitti_path '/poses/05.txt']);
+    %ground_truth = ground_truth(:, [end-8 end]);
     last_frame = 4540;
     K = [7.188560000000e+02 0 6.071928000000e+02
         0 7.188560000000e+02 1.852157000000e+02
@@ -38,7 +52,7 @@ end
 
 %% Bootstrap
 % need to set bootstrap_frames
-bootstrap_frames = [1, 4];
+bootstrap_frames = [0, 2];
 
 if ds == 0
     img0 = imread([kitti_path '/05/image_0/' ...
@@ -61,8 +75,6 @@ else
     assert(false);
 end
 %%
-
-
 [P1,X1, C1, F1, T1] = initialization(img0, img1, K);
 
 %% Continuous operation
