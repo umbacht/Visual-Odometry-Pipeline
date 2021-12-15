@@ -1,4 +1,4 @@
-function [S_crt, T_WC_crt] = processFrame(image_crt, image_prv, S_prv, parameters)
+function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, parameters)
     % 1. Associate keypoints in the crt frame to prv landmarks
     % 2. Estimate current camera pose
     % 3. Triangulate new landmarks not previously found
@@ -26,7 +26,6 @@ function [S_crt, T_WC_crt] = processFrame(image_crt, image_prv, S_prv, parameter
 %   Paremeterlist:
     % Kameraintrinsics K
 
-
     %% Match Keypoints from previous and current image with KLT
     landmarks_prv = S_prv.X;
     keypoints_prv = S_prv.P;
@@ -46,7 +45,6 @@ function [S_crt, T_WC_crt] = processFrame(image_crt, image_prv, S_prv, parameter
     tracked_keypoints_prv = keypoints_prv(point_validity,:);
     release(pointTracker);
     
-
     %% Estimate Pose from matching keypoints
 
     [F_hat, inliersIndex] = estimateFundamentalMatrix(tracked_keypoints_prv, tracked_keypoints, 'Method', ...
@@ -64,6 +62,12 @@ function [S_crt, T_WC_crt] = processFrame(image_crt, image_prv, S_prv, parameter
     S_crt.C = S_prv.C;
     S_crt.F = S_prv.F;
     S_crt.T = S_prv.T;
-   
 
+    %% Triangulation of new landmarks
+    
+    
+
+
+
+    
 end
