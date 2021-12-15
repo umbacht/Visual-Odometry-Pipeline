@@ -87,7 +87,7 @@ S_prv.T = [T1; 0 0 0 1];
 range = (bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
-for i = 2
+for i = 4
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
         image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
