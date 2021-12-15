@@ -1,3 +1,6 @@
+clear all;
+close all;
+
 
 %% Adding required paths
 
@@ -73,24 +76,38 @@ end
 
 [P1,X1, C1, F1, T1] = initialization(img0, img1, K);
 
+% Creating intial state
+S_prv.P = P1;
+S_prv.X = X1;
+S_prv.C = [];
+S_prv.F = [];
+S_prv.T = [T1; 0 0 0 1];
+
 %% Continuous operation
 range = (bootstrap_frames(2)+1):last_frame;
-for i = range
+image_prv = img1;
+
+for i = 2
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
-        image = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
+        image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
     elseif ds == 1
-        image = rgb2gray(imread([malaga_path ...
+        image_crt = rgb2gray(imread([malaga_path ...
             '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
             left_images(i).name]));
     elseif ds == 2
-        image = im2uint8(rgb2gray(imread([parking_path ...
+        image_crt = im2uint8(rgb2gray(imread([parking_path ...
             sprintf('/images/img_%05d.png',i)])));
     else
         assert(false);
     end
+
+
+    [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv,S_prv,K);
+
+
     % Makes sure that plots refresh.    
     pause(0.01);
     
-    prev_img = image;
+    image_prv = image_crt;
 end

@@ -27,12 +27,13 @@ function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, p
     % Kameraintrinsics K
 
     %% Match Keypoints from previous and current image with KLT
-    landmarks_prv = S_prv.X;
-    keypoints_prv = S_prv.P;
-    K = parameters.K;
+    landmarks_prv = S_prv.X(1:3,:)';
+    keypoints_prv = S_prv.P(1:2,:)';
+%     K = parameters.K;
+    K = parameters;
 
     % KLT with Vision Toolbox PointTracker
-    pointTracker = vision.PointTracker('SET SOME STUFF');
+    pointTracker = vision.PointTracker();
     initialize(pointTracker, keypoints_prv, image_prv);
 
     [tracked_points,point_validity] = pointTracker(image_crt);
@@ -47,12 +48,23 @@ function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, p
     
     %% Estimate Pose from matching keypoints
 
-    [F_hat, inliersIndex] = estimateFundamentalMatrix(tracked_keypoints_prv, tracked_keypoints, 'Method', ...
+    [F_hat, inliersIndex] = estimateFundamentalMatrix(tracked_keypoints_prv, tracked_keypoints_crt, 'Method', ...
         'RANSAC', 'NumTrials', 2000, 'DistanceThreshold', 1e-4);
 
     % Get E = [R|t] from inliers used to estimate F (RANSAC subset)
-    [R,t] = relativeCameraPose(F_hat, K, tracked_keypoints_prv(inliersIndex,:), tracked_landmarks_crt(inliersIndex,:));
+    [R,t] = relativeCameraPose(F_hat, cameraParameters('IntrinsicMatrix',K'), tracked_keypoints_prv(inliersIndex,:), tracked_keypoints_crt(inliersIndex,:));
     
+
+    % Decompose and disambiguate transformation, and triangulate landmarks.
+    if size(R,3)>1
+        Roots = R(:,:,1:2);
+        u3 = t(1,:)';
+        p1 = [tracked_keypoints_prv(inliersIndex,:)'; ones(1,length(tracked_keypoints_prv(inliersIndex,:)))];
+        p2 = [tracked_keypoints_crt(inliersIndex,:)'; ones(1,length(tracked_keypoints_crt(inliersIndex,:)))];
+        [R,t] = disambiguateRelativePose(Roots,u3,p1,p2,K,K);
+    end
+
+
     % Build new state S_crt and T_crt
     T_WC_crt = [R, t];
     T_WC_crt = [T_WC_crt; 0 0 0 1];
@@ -65,7 +77,7 @@ function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, p
 
     %% Triangulation of new landmarks
     
-    
+
 
 
 
