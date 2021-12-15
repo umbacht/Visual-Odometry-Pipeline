@@ -10,6 +10,8 @@ addpath(parking_path);
 addpath(malaga_path)
 addpath('Exercise Solutions/Solution 3 - Simple Keypoint Tracker/');
 addpath('Exercise Solutions/Solution 6 - Two-view Geometry/');
+addpath('Exercise Solutions/Solution 6 - Two-view Geometry/8point');
+addpath('Exercise Solutions/Solution 6 - Two-view Geometry/triangulation');
 addpath('Exercise Solutions/Solution 7 - From images to localization/');
 
 %% Setup
