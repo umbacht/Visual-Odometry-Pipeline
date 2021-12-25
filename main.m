@@ -16,7 +16,7 @@ addpath('Exercise Solutions/Solution 6 - Two-view Geometry/');
 addpath('Exercise Solutions/Solution 7 - From images to localization/');
 
 %% Setup
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking
+ds = 2; % 0: KITTI, 1: Malaga, 2: parking
 
 if ds == 0
     % need to set kitti_path to folder containing "05" and "poses"
@@ -76,6 +76,7 @@ end
 
 [P1,X1, C1, F1, T1] = initialization(img0, img1, K);
 
+
 % Creating intial state
 S_prv.P = P1;
 S_prv.X = X1;
@@ -87,12 +88,12 @@ S_prv.T = [T1; 0 0 0 1];
 range = (bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
-for i = 4
+for i = range(3)
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
         image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
     elseif ds == 1
-        image_crt = rgb2gray(imread([malaga_path ...
+        image_crt = rgb2gray(imread([malagdfsa_path ...
             '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
             left_images(i).name]));
     elseif ds == 2
@@ -102,9 +103,7 @@ for i = 4
         assert(false);
     end
 
-
     [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv,S_prv,K);
-
 
     % Makes sure that plots refresh.    
     pause(0.01);
