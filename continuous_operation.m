@@ -81,12 +81,12 @@ function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, p
         imshow(image_crt);
         hold on
 
-        %% something is wrong with the plots
-
         %Plot matched keypoints from current and previous image:
-        plot(S_crt.P(:,2), S_crt.P(:,1), 'gx', 'Linewidth', 2);
+        plot(S_crt.P(:,1), S_crt.P(:,2), 'gx', 'Linewidth', 2);
         tracked_keypoints_prv = tracked_keypoints_prv(inliersIndex,:);
-        plot(tracked_keypoints_prv(:,2),tracked_keypoints_prv(:,1),'bx','Linewidth',2)
+        plot(tracked_keypoints_prv(:,1),tracked_keypoints_prv(:,2),'bx','Linewidth',2)
+
+        showMatchedFeatures(image_prv, image_crt, tracked_keypoints_prv, S_crt.P)
     
         x_from = tracked_keypoints_prv(:,1)';
         x_to = S_crt.P(:,1)';
@@ -94,12 +94,16 @@ function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, p
         y_to = S_crt.P(:,2)';
         plot([y_from; y_to], [x_from; x_to], 'g-', 'Linewidth', 3);
 
-
         %plot lossed keypoints
         not_matched_keypoints_prv = keypoints_prv(~point_validity,:);
         plot(not_matched_keypoints_prv(:,2),not_matched_keypoints_prv(:,1),'rx','LineWidth',2);
 
         hold off
+
+
+
+
+        %showMatchedFeatures
     end
 
     %% Triangulation of new landmarks

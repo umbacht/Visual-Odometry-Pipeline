@@ -27,7 +27,7 @@ function [params] = loadParams(dataset)
 
 if strcmp(dataset, 'KITTI')
 
-    params.path_data = 'data/kitti';
+    params.path_data = '../../../datasets/kitti';
 
     % INITIALIZATION
 
@@ -90,7 +90,7 @@ end
 
 if strcmp(dataset, 'Malaga')
 
-    params.path_data = 'data/malaga';
+    params.path_data = '../../../datasets/malaga';
 
     % INITIALIZATION
 
@@ -155,7 +155,7 @@ if strcmp(dataset, 'parking')
 
     % INITIALIZATION
 
-    params.path_data = 'data/parking';
+    params.path_data = '../../../datasets/parking';
 
     % General parameters
     params.use_matlab = 1; % O: use functions from exercise solutions, 1: use functions from matlab libraries

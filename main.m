@@ -11,9 +11,8 @@ parking_path = '../datasets/parking';
 addpath(kitti_path);
 addpath(parking_path);
 addpath(malaga_path)
-addpath('Exercise Solutions/Solution 3 - Simple Keypoint Tracker/');
-addpath('Exercise Solutions/Solution 6 - Two-view Geometry/');
-addpath('Exercise Solutions/Solution 7 - From images to localization/');
+
+addpath(genpath('Exercise Solutions'));
 
 %% Setup
 ds = 2; % 0: KITTI, 1: Malaga, 2: parking
