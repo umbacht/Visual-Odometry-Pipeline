@@ -77,6 +77,12 @@ end
 
 %% Continuous operation
 range = (bootstrap_frames(2)+1):last_frame;
+
+% init plotting variables
+last20Frameidx = 1:20;
+numMatched3dPoints = [zeros(1,18),size(S_prv.X,1),zeros(1, last_frame - bootstrap_frames(2))];
+xzCoordinates = [zeros(2,18),T_WC_crt([1,3],end),zeros(2, last_frame - bootstrap_frames(2))];
+
 for i = range
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
