@@ -1,7 +1,6 @@
 clear all;
 close all;
 
-
 %% Adding required paths
 
 kitti_path = '../datasets/kitti';
@@ -23,9 +22,11 @@ if ds == 0
     ground_truth = load([kitti_path '/poses/05.txt']);
     ground_truth = ground_truth(:, [end-8 end]);
     last_frame = 4540;
-    K = [7.188560000000e+02 0 6.071928000000e+02
+    parameter.K = [7.188560000000e+02 0 6.071928000000e+02
         0 7.188560000000e+02 1.852157000000e+02
         0 0 1];
+    parameter.bearing_angle_threshold = 3/180*pi;
+
 elseif ds == 1
     % Path containing the many files of Malaga 7.
     assert(exist('malaga_path', 'var') ~= 0);
@@ -33,14 +34,14 @@ elseif ds == 1
         '/malaga-urban-dataset-extract-07_rectified_800x600_Images']);
     left_images = images(3:2:end);
     last_frame = length(left_images);
-    K = [621.18428 0 404.0076
+    parameter.K = [621.18428 0 404.0076
         0 621.18428 309.05989
         0 0 1];
 elseif ds == 2
     % Path containing images, depths and all...
     assert(exist('parking_path', 'var') ~= 0);
     last_frame = 598;
-    K = load([parking_path '/K.txt']);
+    parameter.K = load([parking_path '/K.txt']);
      
     ground_truth = load([parking_path '/poses.txt']);
     ground_truth = ground_truth(:, [end-8 end]);
@@ -73,8 +74,7 @@ else
     assert(false);
 end
 
-[P1,X1, C1, F1, T1] = initialization(img0, img1, K);
-
+[P1,X1, C1, F1, T1] = initialization(img0, img1, parameter.K);
 
 % Creating intial state
 S_prv.P = P1;
@@ -102,7 +102,7 @@ for i = range(3)
         assert(false);
     end
 
-    [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv,S_prv,K);
+    [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv,S_prv,parameter);
 
     % Makes sure that plots refresh.    
     pause(0.01);
