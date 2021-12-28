@@ -1,4 +1,4 @@
-function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, parameter)
+function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, T_WC_prv, parameter)
     % 1. Associate keypoints in the crt frame to prv landmarks
     % 2. Estimate current camera pose
     % 3. Triangulate new landmarks not previously found
@@ -38,9 +38,8 @@ Plotting: plot(y,x)
 %     Kameraintrinsics K
 
     %% Match Keypoints from previous and current image with KLT
-    landmarks_prv = S_prv.X(1:3,:)';
-    keypoints_prv = flipud(S_prv.P(1:2,:));
-    keypoints_prv = keypoints_prv';
+    landmarks_prv = S_prv.X;
+    keypoints_prv = S_prv.P;
 
     % KLT with Vision Toolbox PointTracker
     pointTracker = vision.PointTracker('MaxBidirectionalError', 0.8, ...
@@ -83,7 +82,7 @@ Plotting: plot(y,x)
     % Build new state S_crt and T_crt
     T_imgprv_imgcrt = [R, t'];
     T_imgprv_imgcrt = [T_imgprv_imgcrt; 0 0 0 1];
-    T_WC_crt = S_prv.T * T_imgprv_imgcrt;
+    T_WC_crt = T_WC_prv * T_imgprv_imgcrt;
     S_crt.P = tracked_keypoints_crt(inliersIndex,:);
     S_crt.X = tracked_landmarks_crt(inliersIndex,:);
 
@@ -117,10 +116,8 @@ Plotting: plot(y,x)
     %% Triangulation of new landmarks
 
     S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt, parameter);
+    a = 9;
     
-
-
-
 
     
 end

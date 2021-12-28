@@ -39,20 +39,21 @@ if size(S_crt.C, 1) > 0
     % Triangulate candidates
     for i=1:length(S_crt.C)
 
-        camera_ex_C = [T_WC_curr(1:3,1:3) T_WC_curr(1:3,4)];
+        camera_ex_C = [T_WC_crt(1:3,1:3) T_WC_crt(1:3,4)];
         M_C = parameter.K * camera_ex_C;
 
-        camera_ex_F = [S_crt.T(1:3,1:3, i) S_crt.T(1:3,1:3, i)];
+        camera_ex_F = [S_crt.T(1:3,1:3, i) S_crt.T(1:3,4,i)];
         M_F = parameter.K * camera_ex_F;
 
-        X = linearTriangulation(S_crt.C(i,:),S_crt.F(i,:),M_C,M_F);
+        X = linearTriangulation([S_crt.C(i,:)'; 1], [S_crt.F(i,:)'; 1] , M_C, M_F);
+        % WHAT DIMENSIONS
+
+        S_crt.X = [S_crt.X; X(1:3)'];
+        S_crt.P = [S_crt.P; S_crt.C(i, :)];
         
     end    
     
 end
-    
-    
-    
     
 
 database_keypoints = [S_crt.P; S_crt.C]; 
@@ -86,5 +87,6 @@ C_new = keypoints(logical(is_new_keypoints),:);
 S_crt.C = [S_crt.C; C_new];
 
 S_crt.T = cat(3, S_crt.T, repmat(T_WC_crt, 1, 1, size(C_new, 1)));
+S_crt.F = [S_crt.F; C_new];
 
 end 

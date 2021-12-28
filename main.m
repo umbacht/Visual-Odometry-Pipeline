@@ -84,13 +84,19 @@ S_prv.P = P1;
 S_prv.X = X1;
 S_prv.C = [];
 S_prv.F = [];
-S_prv.T = [T1; 0 0 0 1];
+S_prv.T = [];
 
+T_WC_prv = [T1; 0 0 0 1];
+
+% This needs to be fixed in initialization part:
+S_prv.X = S_prv.X(1:3,:)';
+keypoints_prv = flipud(S_prv.P(1:2,:));
+S_prv.P = keypoints_prv';
 
 range = (bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
-for i = range(3:10)
+for i = range(3:20)
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
         image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
@@ -105,11 +111,13 @@ for i = range(3:10)
         assert(false);
     end
 
-    [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv,S_prv,parameter);
+    [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, T_WC_prv,parameter);
 
     % Makes sure that plots refresh.    
     pause(0.01);
     
     image_prv = image_crt;
     S_prv = S_crt;
+    T_WC_prv = T_WC_crt;
+
 end
