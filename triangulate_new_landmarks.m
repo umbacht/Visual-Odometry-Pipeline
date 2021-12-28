@@ -20,7 +20,7 @@ match_lambda = 4;
 
 num_keypoints = 200;
 
-threshold = 30;
+threshold = 60;
 
 %%
 % This is only done if there are existing candidate keypoints

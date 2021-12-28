@@ -91,32 +91,15 @@ Plotting: plot(y,x)
     S_crt.T = S_prv.T;
 
     % Plots for debugging:
-    plotting = false;
+    plotting = true;
     if plotting
-        showMatchedFeatures(image_prv, image_crt, tracked_keypoints_prv, S_crt.P)
-%         imshow(image_crt);
-%         hold on
-%         %Plot matched keypoints from current and previous image:
-%         plot(S_crt.P(:,2), S_crt.P(:,1), 'gx', 'Linewidth', 2);
-%         tracked_keypoints_prv = tracked_keypoints_prv(inliersIndex,:);
-%         plot(tracked_keypoints_prv(:,1),tracked_keypoints_prv(:,2),'bx','Linewidth',2)
-%     
-%         x_from = tracked_keypoints_prv(:,1)';
-%         x_to = S_crt.P(:,1)';
-%         y_from = tracked_keypoints_prv(:,2)';
-%         y_to = S_crt.P(:,2)';
-%         plot([y_from; y_to], [x_from; x_to], 'g-', 'Linewidth', 3);
-% 
-%         %plot lossed keypoints
-%         not_matched_keypoints_prv = keypoints_prv(~point_validity,:);
-%         plot(not_matched_keypoints_prv(:,2),not_matched_keypoints_prv(:,1),'rx','LineWidth',2);
-%         hold off
+        showMatchedFeatures(image_prv, image_crt, tracked_keypoints_prv(inliersIndex,:), S_crt.P)
     end
 
     %% Triangulation of new landmarks
-
-    S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt, parameter);
     a = 9;
+    S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt, parameter);
+   
     
 
     
