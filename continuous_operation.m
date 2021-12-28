@@ -4,11 +4,11 @@ function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, p
     % 3. Triangulate new landmarks not previously found
 
 %{
-S.P = [X,Y] 2xN
-S.X = [X,Y,Z] 3xN
-S.C = [X,Y] 2xM
-S.F = [X,Y] 2xM
-S.T = [R|t] 4x4
+S.P = [X,Y] Nx2
+S.X = [X,Y,Z] Nx3
+S.C = [X,Y] Mx2
+S.F = [X,Y] Mx2
+S.T 
 
 Plotting: plot(y,x)
 %}
@@ -93,7 +93,7 @@ Plotting: plot(y,x)
 
     % Plots for debugging:
     plotting = false;
-    if plotting      
+    if plotting
         showMatchedFeatures(image_prv, image_crt, tracked_keypoints_prv, S_crt.P)
 %         imshow(image_crt);
 %         hold on
@@ -116,7 +116,7 @@ Plotting: plot(y,x)
 
     %% Triangulation of new landmarks
 
-    S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, parameter);
+    S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt, parameter);
     
 
 

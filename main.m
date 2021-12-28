@@ -76,6 +76,9 @@ end
 
 [P1,X1, C1, F1, T1] = initialization(img0, img1, parameter.K);
 
+
+
+%% Continuous operation
 % Creating intial state
 S_prv.P = P1;
 S_prv.X = X1;
@@ -83,11 +86,11 @@ S_prv.C = [];
 S_prv.F = [];
 S_prv.T = [T1; 0 0 0 1];
 
-%% Continuous operation
+
 range = (bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
-for i = range(3)
+for i = range(3:10)
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
         image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
@@ -108,4 +111,5 @@ for i = range(3)
     pause(0.01);
     
     image_prv = image_crt;
+    S_prv = S_crt;
 end
