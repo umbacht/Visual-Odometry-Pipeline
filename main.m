@@ -10,7 +10,6 @@ parking_path = '../datasets/parking';
 addpath(kitti_path);
 addpath(parking_path);
 addpath(malaga_path)
-
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
