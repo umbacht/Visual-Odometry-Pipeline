@@ -12,23 +12,26 @@ function S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt
 %}
 
 %% Parameters from exercise 3.
+corner_patch_size = 9;
 harris_patch_size = 9;
 harris_kappa = 0.08;
 nonmaximum_supression_radius = 8;
 descriptor_radius = 9;
-match_lambda = 4;
+match_lambda = 2;
 
-num_keypoints = 200;
+num_keypoints = 130;
 
-threshold = 50;
+threshold = 3;
 
 %% Triangulation and tracking of previous candidate keypoints
-if size(S_crt.C, 1) > 0 
+
+if size(S_crt.C, 1) > 15 
     % track previous candidates in current image
     point_tracker = vision.PointTracker('MaxBidirectionalError', 0.8, ...
                                    'NumPyramidLevels', 6, ...
                                    'BlockSize', [21 21], ...
                                    'MaxIterations', 40);
+                               
     initialize(point_tracker, S_crt.C, image_prv);
     % find candidate points
     [C_crt, is_valid] = point_tracker(image_crt);
@@ -57,7 +60,7 @@ for i=1:length(S_crt.C)
     b = X(1:3) - S_crt.T(1:3,4,i);
 
     angle = acos(a'*b/(norm(a)*norm(b)));
-    if (angle > 2/180*pi)
+    if (angle > 4/180*pi)
         S_crt.X = [S_crt.X; X(1:3)'];
         S_crt.P = [S_crt.P; S_crt.C(i, :)];
         % delete confirmed candidates from candidate list
@@ -74,6 +77,9 @@ database_keypoints = [S_crt.P; S_crt.C];
 
 %% Find new candidates (harris features) from current image:
 harris_features = harris(image_crt, harris_patch_size, harris_kappa);
+% assert(min(size(harris_features) == size(harris_features)));
+shi_tomasi_scores = shi_tomasi(image_crt, corner_patch_size);
+% assert(min(size(shi_tomasi_scores) == size(shi_tomasi_scores)));
 keypoints = selectKeypoints(harris_features, num_keypoints, nonmaximum_supression_radius)'; %non-max supr. returns [X,Y]
 
 keypoints = flipud(keypoints')';
@@ -85,15 +91,23 @@ for i = 1:length(keypoints)
     sorted_dists = sort(distances);
     sorted_dists = sorted_dists(sorted_dists~=0);
     min_non_zero_dist = sorted_dists(1);
+    threshold2 = median(sorted_dists)/4;
     
     if min_non_zero_dist <= threshold % if ssd closer than threshold we discard keypoint
         is_new_keypoints(i) = 0;
-    end 
+    end
+    
 end
 
-   
+max_keypoints = 6000;
+new_far_keypoints = min(sum(is_new_keypoints), max_keypoints - length(S_crt.C) - length(S_crt.P));
+if new_far_keypoints > 0
+    C_new = keypoints(logical(is_new_keypoints),:);
+else
+    C_new = [];
+end
+      
 % Taking only the keypoints which fullfill a certain condition
-C_new = keypoints(logical(is_new_keypoints),:);
 S_crt.C = [S_crt.C; C_new];
 
 S_crt.T = cat(3, S_crt.T, repmat(T_WC_crt, 1, 1, size(C_new, 1)));
