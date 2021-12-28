@@ -76,7 +76,7 @@ Plotting: plot(y,x)
         u3 = t(1,:)';
         p1 = [tracked_keypoints_prv(inliersIndex,:)'; ones(1,length(tracked_keypoints_prv(inliersIndex,:)))];
         p2 = [tracked_keypoints_crt(inliersIndex,:)'; ones(1,length(tracked_keypoints_crt(inliersIndex,:)))];
-        [R,t] = disambiguateRelativePose(Roots,u3,p1,p2,K,K);
+        [R,t] = disambiguateRelativePose(Roots,u3,p1,p2,parameter.K,parameter.K);
     end
 
     % Build new state S_crt and T_crt

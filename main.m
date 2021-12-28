@@ -96,7 +96,7 @@ S_prv.P = keypoints_prv';
 range = (bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
-for i = range(3:50)
+for i = range(3:200)
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
         image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
