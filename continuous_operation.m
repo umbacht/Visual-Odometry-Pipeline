@@ -99,7 +99,7 @@ Plotting: plot(y,x)
     S_crt.T = S_prv.T;
 
     % Plots for debugging:
-    plotting = true;
+    plotting = false;
     if plotting
         showMatchedFeatures(image_prv, image_crt, tracked_keypoints_prv(inliersIndex,:), S_crt.P)
     end

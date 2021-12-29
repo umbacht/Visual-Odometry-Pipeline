@@ -13,7 +13,7 @@ addpath(malaga_path)
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 2; % 0: KITTI, 1: Malaga, 2: parking
+ds = 0; % 0: KITTI, 1: Malaga, 2: parking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -118,7 +118,7 @@ elseif ds == 2 % PARKING
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
     parameter.harris_kappa = 0.08;
-    parameter.nonmaximum_supression_radius = 8;
+    parameter.nonmaximum_supression_radius = 20;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
     % New keypoints
