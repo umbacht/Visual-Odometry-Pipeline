@@ -41,7 +41,28 @@ elseif ds == 2
     assert(exist('parking_path', 'var') ~= 0);
     last_frame = 598;
     parameter.K = load([parking_path '/K.txt']);
-     
+    % Harris:
+    parameter.corner_patch_size = 9;
+    parameter.harris_patch_size = 9;
+    parameter.harris_kappa = 0.08;
+    parameter.nonmaximum_supression_radius = 8;
+    parameter.descriptor_radius = 9;
+    parameter.match_lambda = 8;
+
+    parameter.num_keypoints = 120;
+
+    % New keypoints:
+    parameter.threshold = 5;
+
+    % PointTracker
+    parameter.MaxBidirectionalError = 0.8;
+    parameter.NumPyramidLevels = 6;
+    parameter.BlockSize = [21 21];
+    parameter.MaxIterations = 40;
+
+    % Bearing angle 
+    parameter.angle_threshold = 2/180*pi;
+
     ground_truth = load([parking_path '/poses.txt']);
     ground_truth = ground_truth(:, [end-8 end]);
 else

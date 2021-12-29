@@ -36,8 +36,8 @@ Plotting: plot(y,x)
 
 %   Paremeterlist:
 %     Kameraintrinsics K
-
-    %% Match Keypoints from previous and current image with KLT
+    
+%% Match Keypoints from previous and current image with KLT
     landmarks_prv = S_prv.X;
     keypoints_prv = S_prv.P;
 
@@ -46,6 +46,7 @@ Plotting: plot(y,x)
                                    'NumPyramidLevels', 6, ...
                                    'BlockSize', [21 21], ...
                                    'MaxIterations', 40);
+                               
     initialize(pointTracker, keypoints_prv, image_prv);
 
     [tracked_points,point_validity] = pointTracker(image_crt);
@@ -97,10 +98,25 @@ Plotting: plot(y,x)
         showMatchedFeatures(image_prv, image_crt, tracked_keypoints_prv(inliersIndex,:), S_crt.P)
     end
 
-    %% Triangulation of new landmarks
-    a = 9;
-    S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt, parameter);
+    %% New Landmarks triangulation 
+    if size(S_crt.C, 1) > 0 
+        S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt, parameter);
+    end
+    
+    S_crt = find_new_candidate_kp(image_crt, S_crt, T_WC_crt, parameter);
    
+    %% Delete Old Candidate KeyPoints
+%     
+%     num_std = 1000;
+%     X_c = (inv(T_WC_crt) * [S_crt.X, ones(length(S_crt.P), 1)]')';
+%     Z_c = X_c(:, 3);
+%     mean_z = mean(Z_c);
+%     std_z = std(Z_c);
+%     
+%     % Delete landmarks behind vehicle
+%     S_crt.X = S_crt.X(Z_c > 1 & Z_c < (mean_z + num_std*std_z), 1:3);
+%     S_crt.P = S_crt.P(Z_c > 1 & Z_c < (mean_z + num_std*std_z), :);
+    
     
 
     
