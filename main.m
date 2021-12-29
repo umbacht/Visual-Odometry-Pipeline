@@ -153,24 +153,25 @@ else
     assert(false);
 end
 
-[P1,X1, C1, F1, T1] = initialization(img0, img1, parameter.K);
+[P1,X1, C1, F1, T1] = initializationKLT(img0, img1, parameter.K);
 
 
 
 %% Continuous operation
 % Creating intial state
-S_prv.P = P1;
-S_prv.X = X1;
+S_prv.P = P1(1:2,:)';
+S_prv.X = X1(1:3,:)';
 S_prv.C = [];
 S_prv.F = [];
 S_prv.T = [];
 
 T_WC_prv = [T1; 0 0 0 1];
 
-% This needs to be fixed in initialization part:
-S_prv.X = S_prv.X(1:3,:)';
-keypoints_prv = flipud(S_prv.P(1:2,:));
-S_prv.P = keypoints_prv';
+% % This needs to be fixed in initialization part: This is only needed for
+% Harris:
+% S_prv.X = S_prv.X(1:3,:)';
+% keypoints_prv = flipud(S_prv.P(1:2,:));
+% S_prv.P = keypoints_prv';
 
 range = (bootstrap_frames(2)+1):last_frame;
 image_prv = img1;

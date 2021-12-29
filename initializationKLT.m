@@ -10,17 +10,17 @@ num_keypoints = 200;
 %% Find Harris keypoints for first image
 harris1 = harris(image1, harris_patch_size, harris_kappa);
 
-figure(111)
-imagesc(harris1);
-daspect([1 1 1]);
+% figure(111)
+% imagesc(harris1);
+% daspect([1 1 1]);
 
 
 keypoints1 = selectKeypoints(harris1, num_keypoints, nonmaximum_supression_radius);
 
-figure(222);
-imshow(image1);
-hold on;
-plot(keypoints1(2, :), keypoints1(1, :), 'rx', 'Linewidth', 2);
+% figure(222);
+% imshow(image1);
+% hold on;
+% plot(keypoints1(2, :), keypoints1(1, :), 'rx', 'Linewidth', 2);
 
 %% KLT
 % KLT with Vision Toolbox PointTracker
@@ -47,7 +47,7 @@ p2 = [tracked_keypoints2';ones(1,size(tracked_keypoints2,1))];
 [F, inliersIndex] = estimateFundamentalMatrix(p1_tilda(1:2,:)', p2_tilda(1:2,:)', ...
      'Method','RANSAC', 'NumTrials',2000, 'DistanceThreshold',1e-4);
 
-inlier_ratio =  nnz(inliersIndex)/size(inliersIndex,1)
+inlier_ratio =  nnz(inliersIndex)/size(inliersIndex,1);
 
 F = (T2.') * F * T1;
 
@@ -73,8 +73,8 @@ F1 = unmatched_keypoints2;
 T1 = [R_C2_W', -R_C2_W'*T_C2_W];
 
 
-%%
-figure(69)
+%% Plotting for debugging
+% figure(69)
 % imshow(image2);
 % hold on
 
@@ -82,37 +82,37 @@ figure(69)
 % plot(P1(:,1), P1(:,2), 'gx', 'Linewidth', 2);
 % tracked_keypoints1 = tracked_keypoints1(inliersIndex,:);
 % plot(tracked_keypoints1(:,1),tracked_keypoints1(:,2),'bx','Linewidth',2)
+% 
+% showMatchedFeatures(image1, image2, ...
+%     tracked_keypoints1(inliersIndex,:), tracked_keypoints2(inliersIndex,:));
 
-showMatchedFeatures(image1, image2, ...
-    tracked_keypoints1(inliersIndex,:), tracked_keypoints2(inliersIndex,:));
 
+% figure(6);
+% % tiledlayout(1,2,'TileSpacing','compact')
+% tiledlayout(2,1)
 
-figure(6);
-% tiledlayout(1,2,'TileSpacing','compact')
-tiledlayout(2,1)
-
-nexttile;
-hold on;
-imshow(image1);
-plot(tracked_points(:,1), tracked_points(:,2), 'rx', 'Linewidth', 2);
-
-x_from = tracked_keypoints2(:, 1)';
-x_to = tracked_keypoints1(:, 1)';
-y_from = tracked_keypoints2(:, 2)';
-y_to = tracked_keypoints1(:, 2)';
-plot([x_from; x_to], [y_from; y_to], 'g-', 'Linewidth', 3);
-title('First image showing red tracked points of second image');
-nexttile;
-hold on;
-imshow(image2);
-plot(tracked_keypoints2((1-inliersIndex)>0, 1), ...
-    tracked_keypoints2((1-inliersIndex)>0, 2), 'rx', 'Linewidth', 2);
-plot(tracked_keypoints2((inliersIndex)>0, 1), ...
-    tracked_keypoints2((inliersIndex)>0, 2), 'gx', 'Linewidth', 2);
-x_from = tracked_keypoints2(inliersIndex>0, 1)';
-x_to = tracked_keypoints1(inliersIndex>0, 1)';
-y_from = tracked_keypoints2(inliersIndex>0, 2)';
-y_to = tracked_keypoints1(inliersIndex>0, 2)';
-plot([x_from; x_to], [y_from; y_to], 'g-', 'Linewidth', 3);
-title('Second image showing red (RANSAC) outliers and green inliers');
+% nexttile;
+% hold on;
+% imshow(image1);
+% plot(tracked_points(:,1), tracked_points(:,2), 'rx', 'Linewidth', 2);
+% 
+% x_from = tracked_keypoints2(:, 1)';
+% x_to = tracked_keypoints1(:, 1)';
+% y_from = tracked_keypoints2(:, 2)';
+% y_to = tracked_keypoints1(:, 2)';
+% plot([x_from; x_to], [y_from; y_to], 'g-', 'Linewidth', 3);
+% title('First image showing red tracked points of second image');
+% nexttile;
+% hold on;
+% imshow(image2);
+% plot(tracked_keypoints2((1-inliersIndex)>0, 1), ...
+%     tracked_keypoints2((1-inliersIndex)>0, 2), 'rx', 'Linewidth', 2);
+% plot(tracked_keypoints2((inliersIndex)>0, 1), ...
+%     tracked_keypoints2((inliersIndex)>0, 2), 'gx', 'Linewidth', 2);
+% x_from = tracked_keypoints2(inliersIndex>0, 1)';
+% x_to = tracked_keypoints1(inliersIndex>0, 1)';
+% y_from = tracked_keypoints2(inliersIndex>0, 2)';
+% y_to = tracked_keypoints1(inliersIndex>0, 2)';
+% plot([x_from; x_to], [y_from; y_to], 'g-', 'Linewidth', 3);
+% title('Second image showing red (RANSAC) outliers and green inliers');
 
