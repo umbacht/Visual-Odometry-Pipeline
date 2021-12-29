@@ -23,38 +23,38 @@ daspect([1 1 1]);
 
 keypoints1 = selectKeypoints(harris1, num_keypoints, nonmaximum_supression_radius);
 keypoints2 = selectKeypoints(harris2, num_keypoints, nonmaximum_supression_radius);
-% 
-% figure(222);
-% subplot(1, 2, 1);
-% imshow(image1);
-% hold on;
-% plot(keypoints1(2, :), keypoints1(1, :), 'rx', 'Linewidth', 2);
-% subplot(1, 2, 2);
-% imshow(image2);
-% hold on;
-% plot(keypoints2(2, :), keypoints2(1, :), 'rx', 'Linewidth', 2);
+
+figure(222);
+subplot(1, 2, 1);
+imshow(image1);
+hold on;
+plot(keypoints1(2, :), keypoints1(1, :), 'rx', 'Linewidth', 2);
+subplot(1, 2, 2);
+imshow(image2);
+hold on;
+plot(keypoints2(2, :), keypoints2(1, :), 'rx', 'Linewidth', 2);
 
 descriptors1 = describeKeypoints(image1, keypoints1, descriptor_radius);
 descriptors2 = describeKeypoints(image2, keypoints2, descriptor_radius);
 
-% figure(333);
-% for i = 1:16
-%     subplot(4, 4, i);
-%     patch_size = 2 * descriptor_radius + 1;
-%     imagesc(uint8(reshape(descriptors2(:,i), [patch_size patch_size])));
-%     axis equal;
-%     axis off;
-% end
+figure(333);
+for i = 1:16
+    subplot(4, 4, i);
+    patch_size = 2 * descriptor_radius + 1;
+    imagesc(uint8(reshape(descriptors2(:,i), [patch_size patch_size])));
+    axis equal;
+    axis off;
+end
 
 %% Match keypoints between images and remove unmatched keypoints
 all_matches = matchDescriptors(descriptors2, descriptors1, match_lambda);
 %matches(i) gives the descriptor index of descriptors1 which matches to descriptors2(:, i).
 %value is zero if descriptor, descriptors2(:, i), has no match.
-% figure(444);
-% imshow(image2);
-% hold on;
-% plot(keypoints2(2, :), keypoints2(1, :), 'rx', 'Linewidth', 2);
-% plotMatches(all_matches, keypoints2, keypoints1);
+figure(444);
+imshow(image2);
+hold on;
+plot(keypoints2(2, :), keypoints2(1, :), 'rx', 'Linewidth', 2);
+plotMatches(all_matches, keypoints2, keypoints1);
 
 matched_keypoints2 = keypoints2(:, all_matches > 0);
 keypoints1_idx = all_matches(all_matches > 0);
@@ -98,22 +98,22 @@ T1 = [R_C2_W', -R_C2_W'*T_C2_W];
 %%
 
 
-% figure(5);
-% subplot(1, 2, 1);
-% hold on;
-% imshow(image1);
-% plot(keypoints2(2, :), keypoints2(1, :), 'rx', 'Linewidth', 2);
-% plotMatches(all_matches, keypoints2, keypoints1);
-% 
-% subplot(1, 2, 2);
-% hold on;
-% imshow(image2);
-% plot(matched_keypoints2(2, (1-inliersIndex)>0), ...
-%     matched_keypoints2(1, (1-inliersIndex)>0), 'rx', 'Linewidth', 2);
-% plot(matched_keypoints2(2, (inliersIndex)>0), ...
-%     matched_keypoints2(1, (inliersIndex)>0), 'gx', 'Linewidth', 2);
-% plotMatches(keypoints1_idx(inliersIndex>0), ...
-%     matched_keypoints2(:, inliersIndex>0), ...
-%     keypoints1);
-% plot(p2(2,:), p2(1,:), 'rx', 'Linewidth', 2);
-% plotMatches(1:size(p2,2),p2(1:2,:),p1(1:2,:));
+figure(5);
+subplot(1, 2, 1);
+hold on;
+imshow(image1);
+plot(keypoints2(2, :), keypoints2(1, :), 'rx', 'Linewidth', 2);
+plotMatches(all_matches, keypoints2, keypoints1);
+
+subplot(1, 2, 2);
+hold on;
+imshow(image2);
+plot(matched_keypoints2(2, (1-inliersIndex)>0), ...
+    matched_keypoints2(1, (1-inliersIndex)>0), 'rx', 'Linewidth', 2);
+plot(matched_keypoints2(2, (inliersIndex)>0), ...
+    matched_keypoints2(1, (inliersIndex)>0), 'gx', 'Linewidth', 2);
+plotMatches(keypoints1_idx(inliersIndex>0), ...
+    matched_keypoints2(:, inliersIndex>0), ...
+    keypoints1);
+plot(p2(2,:), p2(1,:), 'rx', 'Linewidth', 2);
+plotMatches(1:size(p2,2),p2(1:2,:),p1(1:2,:));

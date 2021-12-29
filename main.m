@@ -15,96 +15,115 @@ addpath(genpath('Exercise Solutions'));
 %% Setup
 ds = 0; % 0: KITTI, 1: Malaga, 2: parking
 
-if ds == 0
+if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
     assert(exist('kitti_path', 'var') ~= 0);
     ground_truth = load([kitti_path '/poses/05.txt']);
     ground_truth = ground_truth(:, [end-8 end]);
     last_frame = 4540;
+    
+    % Parameters
     parameter.K = [7.188560000000e+02 0 6.071928000000e+02
         0 7.188560000000e+02 1.852157000000e+02
         0 0 1];
-    
+    % PointTracker
+    parameter.MaxBidirectionalError_cont = 0.8;
+    parameter.NumPyramidLevels_cont = 6;
+    parameter.BlockSize_cont = [21 21];
+    parameter.MaxIterations_cont = 40;
+    % Triangulation of new landmarks
+    % PointTracker
+    parameter.MaxBidirectionalError_triang = 0.8;
+    parameter.NumPyramidLevels_triang = 6;
+    parameter.BlockSize_triang = [21 21];
+    parameter.MaxIterations_triang = 40;
+    % Find new candidates:
+    % Harris 
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
     parameter.harris_kappa = 0.08;
     parameter.nonmaximum_supression_radius = 20;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
-
+    % New keypoints
     parameter.num_keypoints = 300;
+    parameter.threshold = 5; %Minimum distance to previous
+    parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
 
-    % New keypoints:
-    parameter.threshold = 5;
 
-    % PointTracker
-    parameter.MaxBidirectionalError = 0.8;
-    parameter.NumPyramidLevels = 6;
-    parameter.BlockSize = [21 21];
-    parameter.MaxIterations = 40;
-
-    % Bearing angle 
-    parameter.angle_threshold = 1.5/180*pi;
-
-elseif ds == 1
+elseif ds == 1 % MALAGA
     % Path containing the many files of Malaga 7.
     assert(exist('malaga_path', 'var') ~= 0);
     images = dir([malaga_path ...
         '/malaga-urban-dataset-extract-07_rectified_800x600_Images']);
     left_images = images(3:2:end);
     last_frame = length(left_images);
+
+    % Parameters
     parameter.K = [621.18428 0 404.0076
         0 621.18428 309.05989
         0 0 1];
-     parameter.corner_patch_size = 9;
-    parameter.harris_patch_size = 9;
-    parameter.harris_kappa = 0.08;
-    parameter.nonmaximum_supression_radius = 20;
-    parameter.descriptor_radius = 9;
-    parameter.match_lambda = 4;
-
-    parameter.num_keypoints = 300;
-
-    % New keypoints:
-    parameter.threshold = 5;
-
+    % Continuous:
     % PointTracker
-    parameter.MaxBidirectionalError = 0.8;
-    parameter.NumPyramidLevels = 6;
-    parameter.BlockSize = [21 21];
-    parameter.MaxIterations = 40;
-
-    % Bearing angle 
-    parameter.angle_threshold = 1.5/180*pi;
-elseif ds == 2
-    % Path containing images, depths and all...
-    assert(exist('parking_path', 'var') ~= 0);
-    last_frame = 598;
-    parameter.K = load([parking_path '/K.txt']);
-    % Harris:
+    parameter.MaxBidirectionalError_cont = 0.8;
+    parameter.NumPyramidLevels_cont = 6;
+    parameter.BlockSize_cont = [21 21];
+    parameter.MaxIterations_cont = 40;
+    % Triangulation of new landmarks
+    % PointTracker
+    parameter.MaxBidirectionalError_triang = 0.8;
+    parameter.NumPyramidLevels_triang = 6;
+    parameter.BlockSize_triang = [21 21];
+    parameter.MaxIterations_triang = 40;
+    % Find new candidates:
+    % Harris 
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
     parameter.harris_kappa = 0.08;
     parameter.nonmaximum_supression_radius = 20;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
-
+    % New keypoints
     parameter.num_keypoints = 300;
+    parameter.threshold = 5; %Minimum distance to previous
+    parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
 
-    % New keypoints:
-    parameter.threshold = 5;
 
-    % PointTracker
-    parameter.MaxBidirectionalError = 0.8;
-    parameter.NumPyramidLevels = 6;
-    parameter.BlockSize = [21 21];
-    parameter.MaxIterations = 40;
-
-    % Bearing angle 
-    parameter.angle_threshold = 1.5/180*pi;
-
+elseif ds == 2 % PARKING
+    % Path containing images, depths and all...
+    assert(exist('parking_path', 'var') ~= 0);
+    last_frame = 598;
     ground_truth = load([parking_path '/poses.txt']);
     ground_truth = ground_truth(:, [end-8 end]);
+
+    % Parameters
+    parameter.K = load([parking_path '/K.txt']);
+    % Continuous:
+    % PointTracker
+    parameter.MaxBidirectionalError_cont = 0.8;
+    parameter.NumPyramidLevels_cont = 6;
+    parameter.BlockSize_cont = [21 21];
+    parameter.MaxIterations_cont = 40;
+    % Triangulation of new landmarks
+    % PointTracker
+    parameter.MaxBidirectionalError_triang = 0.8;
+    parameter.NumPyramidLevels_triang = 6;
+    parameter.BlockSize_triang = [21 21];
+    parameter.MaxIterations_triang = 40;
+    % Find new candidates:
+    % Harris 
+    parameter.corner_patch_size = 9;
+    parameter.harris_patch_size = 9;
+    parameter.harris_kappa = 0.08;
+    parameter.nonmaximum_supression_radius = 20;
+    parameter.descriptor_radius = 9;
+    parameter.match_lambda = 4;
+    % New keypoints
+    parameter.num_keypoints = 300;
+    parameter.threshold = 5; %Minimum distance to previous
+    parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
+
+
 else
     assert(false);
 end
@@ -156,7 +175,7 @@ S_prv.P = keypoints_prv';
 range = (bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
-for i = range(3:200)
+for i = range
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
         image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);

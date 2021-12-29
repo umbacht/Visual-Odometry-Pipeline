@@ -6,7 +6,7 @@ function S_crt = find_new_candidate_kp(image_crt, S_crt, T_WC_crt, parameter)
     database_keypoints = [S_crt.P; S_crt.C]; 
 
     harris_features = harris(image_crt, parameter.harris_patch_size, parameter.harris_kappa);
-    % assert(min(size(harris_features) == size(harris_features)));
+    assert(min(size(harris_features) == size(harris_features)));
 
     % Selecting KeyPoints 
     keypoints = selectKeypoints(harris_features, parameter.num_keypoints, parameter.nonmaximum_supression_radius)'; 
