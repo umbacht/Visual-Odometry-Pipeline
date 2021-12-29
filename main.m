@@ -123,7 +123,7 @@ elseif ds == 2 % PARKING
     parameter.match_lambda = 4;
     % New keypoints
     parameter.num_keypoints = 300;
-    parameter.threshold = 5; %Minimum distance to previous
+    parameter.threshold = 15; %Minimum distance to previous
     parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
 
 else

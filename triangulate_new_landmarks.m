@@ -37,7 +37,7 @@ new_index_kp = [];
 % Triangulate candidates
 for i=1:length(S_crt.C)
     
-    camera_ex_C = [T_WC_crt(1:3,1:3).' T_WC_crt(1:3,4)];
+    camera_ex_C = [T_WC_crt(1:3,1:3) T_WC_crt(1:3,4)];
     M_C = parameter.K * camera_ex_C;
 
     camera_ex_F = [S_crt.T(1:3,1:3,i) S_crt.T(1:3,4,i)];

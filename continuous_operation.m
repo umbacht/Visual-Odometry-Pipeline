@@ -88,7 +88,7 @@ Plotting: plot(y,x)
     end
 
     % Build new state S_crt and T_crt
-    T_imgprv_imgcrt = [R, t'];
+    T_imgprv_imgcrt = [R', -R'*t'];
     T_imgprv_imgcrt = [T_imgprv_imgcrt; 0 0 0 1];
     T_WC_crt = T_WC_prv * T_imgprv_imgcrt;
     S_crt.P = tracked_keypoints_crt(inliersIndex,:);
