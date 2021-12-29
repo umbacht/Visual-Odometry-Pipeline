@@ -8,7 +8,7 @@ clc
 %% Setup
 % Setup for the respective dataset
 
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking 3: rosie
+ds = 2; % 0: KITTI, 1: Malaga, 2: parking 3: rosie
 datasets = {'KITTI','Malaga', 'parking','rosie'};
 
 % load params

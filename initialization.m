@@ -95,7 +95,6 @@ C1 = unmatched_keypoints2;
 F1 = unmatched_keypoints2;
 T1 = [R_C2_W', -R_C2_W'*T_C2_W];
 
-
 %%
 
 
@@ -116,5 +115,5 @@ plot(matched_keypoints2(2, (inliersIndex)>0), ...
 plotMatches(keypoints1_idx(inliersIndex>0), ...
     matched_keypoints2(:, inliersIndex>0), ...
     keypoints1);
-% plot(p2(2,:), p2(1,:), 'rx', 'Linewidth', 2);
-% plotMatches(1:size(p2,2),p2(1:2,:),p1(1:2,:));
+plot(p2(2,:), p2(1,:), 'rx', 'Linewidth', 2);
+plotMatches(1:size(p2,2),p2(1:2,:),p1(1:2,:));
