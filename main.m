@@ -176,6 +176,14 @@ T_WC_prv = [T1; 0 0 0 1];
 range = (parameter.bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
+% initialize data for plotting
+last20Frameidx = 1:20;
+numMatched3dPoints = [zeros(1, 18), size(S_prv.X, 1), ...
+                        zeros(1, last_frame - parameter.bootstrap_frames(2))];
+xzCoordinates = [zeros(2, 18), T_WC_prv([1, 3], end), ...
+                       zeros(2, last_frame - parameter.bootstrap_frames(2))];
+                   
+                            
 for i = range
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
@@ -192,7 +200,10 @@ for i = range
     end
 
     [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, T_WC_prv,parameter);
-
+    
+    % plotting
+    [numMatched3dPoints, xzCoordinates, last20Frameidx] = ...
+        plotting(S_crt, T_WC_crt, image_crt, numMatched3dPoints, xzCoordinates, last20Frameidx);
     % Makes sure that plots refresh.    
     pause(0.01);
     
@@ -202,3 +213,6 @@ for i = range
     
 
 end
+
+% show image when finished
+imshow('finish.jpg')

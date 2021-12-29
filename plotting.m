@@ -31,7 +31,7 @@ title('The Full Trajectory')
 r1 = subplot(4,4,[3,4,7,8,11,12,15,16]);
 cla(r1);
 hold on
-plot(xzCoordinates(1,last20Frameidx),xz(2,last20Frameidx),'b')
+plot(xzCoordinates(1,last20Frameidx),xzCoordinates(2,last20Frameidx),'b')
 
 plot(S_crt.X(:,1),S_crt.X(:,3),'gx')
 hold off
