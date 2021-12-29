@@ -59,13 +59,19 @@ Plotting: plot(y,x)
     tracked_keypoints_prv = keypoints_prv(point_validity,:);
     release(pointTracker);
     
+%     disp('Continuous');
+%     disp('KP_prv: ' + string(length(keypoints_prv)));
+%     disp(sum(point_validity));
+%     disp(length(point_validity)-sum(point_validity));
+%     a = 7;
+        
     %% Estimate Pose from matching keypoints
 
     [tracked_keypoints_prv_norm, T1] = normalise2dpts([tracked_keypoints_prv'; ones(1,length(tracked_keypoints_prv))]);
     [tracked_keypoints_crt_norm, T2] = normalise2dpts([tracked_keypoints_crt'; ones(1,length(tracked_keypoints_crt))]);
 
     [F_hat, inliersIndex] = estimateFundamentalMatrix(tracked_keypoints_prv_norm(1:2,:)', tracked_keypoints_crt_norm(1:2,:)', 'Method','RANSAC', 'NumTrials', 2000, 'DistanceThreshold', 1e-4);
-    F_hat = T2.'*F_hat*T1;
+    F_hat = T2.'* F_hat * T1;
 
     % Get E = [R|t] from inliers used to estimate F (RANSAC subset)
     [R,t] = relativeCameraPose(F_hat, cameraParameters('IntrinsicMatrix',parameter.K'), tracked_keypoints_prv(inliersIndex,:), tracked_keypoints_crt(inliersIndex,:));
