@@ -1,11 +1,11 @@
-function S_crt = find_new_candidate_kp(image_crt, image_prv, S_crt, T_WC_crt, parameter)
+function S_crt = find_new_candidate_kp(image_crt, S_crt, T_WC_crt, parameter)
 
 % Function Description
 
     %% Find new candidates (harris features) from current image:
     database_keypoints = [S_crt.P; S_crt.C]; 
 
-    harris_features = harris(image_crt, harris_patch_size, harris_kappa);
+    harris_features = harris(image_crt, parameter.harris_patch_size, parameter.harris_kappa);
     assert(min(size(harris_features) == size(harris_features)));
 
     % Selecting KeyPoints 
@@ -32,5 +32,19 @@ function S_crt = find_new_candidate_kp(image_crt, image_prv, S_crt, T_WC_crt, pa
     S_crt.F = [S_crt.F; C_new];
 
     S_crt.T = cat(3, S_crt.T, repmat(T_WC_crt, 1, 1, size(C_new, 1)));
+    
+    figure(123)
+    subplot(2,1,1);
+    imshow(image_crt);
+    hold on;
+    plot(C_new(:,1), C_new(:,2), 'bx', 'Linewidth', 2);
+    subplot(2,1,2);
+    imshow(image_crt);
+    hold on;
+    plot(S_crt.C(:,1), S_crt.C(:,2), 'rx', 'Linewidth', 2);
+    hold off;
+    a = 4;
+    
+    
 end
     

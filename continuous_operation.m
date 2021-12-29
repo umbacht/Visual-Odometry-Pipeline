@@ -106,7 +106,6 @@ Plotting: plot(y,x)
     S_crt = find_new_candidate_kp(image_crt, S_crt, T_WC_crt, parameter);
    
     %% Delete Old Candidate KeyPoints
-%     
 %     num_std = 1000;
 %     X_c = (inv(T_WC_crt) * [S_crt.X, ones(length(S_crt.P), 1)]')';
 %     Z_c = X_c(:, 3);
@@ -116,8 +115,5 @@ Plotting: plot(y,x)
 %     % Delete landmarks behind vehicle
 %     S_crt.X = S_crt.X(Z_c > 1 & Z_c < (mean_z + num_std*std_z), 1:3);
 %     S_crt.P = S_crt.P(Z_c > 1 & Z_c < (mean_z + num_std*std_z), :);
-    
-    
-
     
 end

@@ -49,7 +49,7 @@ elseif ds == 2
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 8;
 
-    parameter.num_keypoints = 120;
+    parameter.num_keypoints = 300;
 
     % New keypoints:
     parameter.threshold = 5;
