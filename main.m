@@ -13,7 +13,7 @@ addpath(malaga_path)
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking
+ds = 2; % 0: KITTI, 1: Malaga, 2: parking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -26,6 +26,7 @@ if ds == 0 % KITTI
     parameter.K = [7.188560000000e+02 0 6.071928000000e+02
         0 7.188560000000e+02 1.852157000000e+02
         0 0 1];
+    parameter.bootstrap_frames = [0, 2];
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
     parameter.NumPyramidLevels_cont = 6;
@@ -63,6 +64,7 @@ elseif ds == 1 % MALAGA
     parameter.K = [621.18428 0 404.0076
         0 621.18428 309.05989
         0 0 1];
+    parameter.bootstrap_frames = [1, 3];
     % Continuous:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
@@ -98,6 +100,7 @@ elseif ds == 2 % PARKING
 
     % Parameters
     parameter.K = load([parking_path '/K.txt']);
+    parameter.bootstrap_frames = [0, 2];
     % Continuous:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
@@ -115,7 +118,7 @@ elseif ds == 2 % PARKING
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
     parameter.harris_kappa = 0.08;
-    parameter.nonmaximum_supression_radius = 20;
+    parameter.nonmaximum_supression_radius = 8;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
     % New keypoints
@@ -123,38 +126,35 @@ elseif ds == 2 % PARKING
     parameter.threshold = 5; %Minimum distance to previous
     parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
 
-
 else
     assert(false);
 end
 
 %% Bootstrap
 % need to set bootstrap_frames
-bootstrap_frames = [0, 2];
 
 if ds == 0
     img0 = imread([kitti_path '/05/image_0/' ...
-        sprintf('%06d.png',bootstrap_frames(1))]);
+        sprintf('%06d.png',parameter.bootstrap_frames(1))]);
     img1 = imread([kitti_path '/05/image_0/' ...
-        sprintf('%06d.png',bootstrap_frames(2))]);
+        sprintf('%06d.png',parameter.bootstrap_frames(2))]);
 elseif ds == 1
     img0 = rgb2gray(imread([malaga_path ...
         '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
-        left_images(bootstrap_frames(1)).name]));
+        left_images(parameter.bootstrap_frames(1)).name]));
     img1 = rgb2gray(imread([malaga_path ...
         '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
-        left_images(bootstrap_frames(2)).name]));
+        left_images(parameter.bootstrap_frames(2)).name]));
 elseif ds == 2
     img0 = rgb2gray(imread([parking_path ...
-        sprintf('/images/img_%05d.png',bootstrap_frames(1))]));
+        sprintf('/images/img_%05d.png',parameter.bootstrap_frames(1))]));
     img1 = rgb2gray(imread([parking_path ...
-        sprintf('/images/img_%05d.png',bootstrap_frames(2))]));
+        sprintf('/images/img_%05d.png',parameter.bootstrap_frames(2))]));
 else
     assert(false);
 end
 
 [P1,X1, C1, F1, T1] = initializationKLT(img0, img1, parameter.K);
-
 
 
 %% Continuous operation
@@ -173,7 +173,7 @@ T_WC_prv = [T1; 0 0 0 1];
 % keypoints_prv = flipud(S_prv.P(1:2,:));
 % S_prv.P = keypoints_prv';
 
-range = (bootstrap_frames(2)+1):last_frame;
+range = (parameter.bootstrap_frames(2)+1):last_frame;
 image_prv = img1;
 
 for i = range
@@ -181,7 +181,7 @@ for i = range
     if ds == 0
         image_crt = imread([kitti_path '/05/image_0/' sprintf('%06d.png',i)]);
     elseif ds == 1
-        image_crt = rgb2gray(imread([malagdfsa_path ...
+        image_crt = rgb2gray(imread([malaga_path ...
             '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
             left_images(i).name]));
     elseif ds == 2
