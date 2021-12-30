@@ -117,8 +117,8 @@ Plotting: plot(y,x)
     landmarks_cameraframe = T_WC_crt \ ([S_crt.X, ones(length(S_crt.X),1)]');
     z_coordinate = landmarks_cameraframe(3, :);
     
-    S_crt.X = S_crt.X(z_coordinate>0 & z_coordinate<200, 1:3);
-    S_crt.P = S_crt.P(z_coordinate>0 & z_coordinate<200, :);
+    S_crt.X = S_crt.X(z_coordinate>0 , 1:3);
+    S_crt.P = S_crt.P(z_coordinate>0 , :);
 %     num_std = 1000;
 %     X_c = (T_WC_crt\[S_crt.X, ones(length(S_crt.P), 1)]')';
 %     Z_c = X_c(:, 3);
