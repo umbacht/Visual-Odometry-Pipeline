@@ -71,32 +71,31 @@ Plotting: plot(y,x)
     [tracked_keypoints_crt_norm, T2] = normalise2dpts([tracked_keypoints_crt'; ones(1,length(tracked_keypoints_crt))]);
 
     [F_hat, inliersIndex] = estimateFundamentalMatrix(tracked_keypoints_prv_norm(1:2,:)', tracked_keypoints_crt_norm(1:2,:)', 'Method','RANSAC', 'NumTrials', 2000, 'DistanceThreshold', 1e-4);
-    F_hat = T2.'* F_hat * T1;
-
+    F_hat = T2.'* F_hat * T1; 
+    E = parameter.K'*F_hat*parameter.K; %%% Added
+    [Rots,u3] = decomposeEssentialMatrix(E); %%% Added
     % Get E = [R|t] from inliers used to estimate F (RANSAC subset)
-    [R,t] = relativeCameraPose(F_hat, cameraParameters('IntrinsicMatrix',parameter.K'), tracked_keypoints_prv(inliersIndex,:), tracked_keypoints_crt(inliersIndex,:));
+%     [R,t] = relativeCameraPose(F_hat, cameraParameters('IntrinsicMatrix',parameter.K'), tracked_keypoints_prv(inliersIndex,:), tracked_keypoints_crt(inliersIndex,:));
     % returns the orientation and location of camera 2 relative to camera 1
 
     % Decompose and disambiguate transformation, and triangulate landmarks.
-    if size(R,3)>1
-        Roots = R(:,:,1:2);
-        u3 = t(1,:)';
-        p1 = [tracked_keypoints_prv(inliersIndex,:)'; ones(1,length(tracked_keypoints_prv(inliersIndex,:)))];
-        p2 = [tracked_keypoints_crt(inliersIndex,:)'; ones(1,length(tracked_keypoints_crt(inliersIndex,:)))];
-        [R,t] = disambiguateRelativePose(Roots,u3,p1,p2,parameter.K,parameter.K);
-        t = t';
-    end
+    
+    %%% Changed
+    p1 = [tracked_keypoints_prv(inliersIndex,:)'; ones(1,length(tracked_keypoints_prv(inliersIndex,:)))];
+    p2 = [tracked_keypoints_crt(inliersIndex,:)'; ones(1,length(tracked_keypoints_crt(inliersIndex,:)))];
+    [R,t] = disambiguateRelativePose(Rots,u3,p1,p2,parameter.K,parameter.K);
+
 
     % Build new state S_crt and T_crt
-    T_imgprv_imgcrt = [R', -R'*t'];
+    T_imgprv_imgcrt = [R', -R'*t]; %%%CHANGED%%%
     T_imgprv_imgcrt = [T_imgprv_imgcrt; 0 0 0 1];
     T_WC_crt = T_WC_prv * T_imgprv_imgcrt;
     S_crt.P = tracked_keypoints_crt(inliersIndex,:);
     S_crt.X = tracked_landmarks_crt(inliersIndex,:);
 
-    S_crt.C = S_prv.C;
-    S_crt.F = S_prv.F;
-    S_crt.T = S_prv.T;
+    S_crt.C = S_prv.C; %%% initial values of S_crt that could change later
+    S_crt.F = S_prv.F; %%%
+    S_crt.T = S_prv.T; %%%
 
     % Plots for debugging:
     plotting = false;

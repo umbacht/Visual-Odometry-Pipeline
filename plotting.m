@@ -4,7 +4,8 @@ function [numMatched3dPoints, xzCoordinates, last20Frameidx] = ...
 crtIdx = last20Frameidx(end);
 T_CW_crt = [T_WC_crt(1:3,1:3)',  -T_WC_crt(1:3,1:3)'*T_WC_crt(1:3,4);
                 0,0,0,1];
-xzCoordinatesCW(:,crtIdx) = T_CW_crt([1,3],end);
+xzCoordinates(:,crtIdx) = T_WC_crt([1,3],end);
+% xzCoordinatesCW(:,crtIdx) = T_CW_crt([1,3],end);
 % xzCoordinatesWC(:,crtIdx) = T_WC_crt([1,3],end);
 numMatched3dPoints(crtIdx) = size(S_crt.X,1);
 
@@ -26,7 +27,7 @@ title('The number of matched 3d points over last 20 frames')
 
 % plot the full trajectory
 subplot(4,4,[10,14])
-plot(xzCoordinatesCW(1,19:crtIdx),xzCoordinatesCW(2,19:crtIdx))
+plot(xzCoordinates(1,19:crtIdx),xzCoordinates(2,19:crtIdx)) %%%Edited
 axis equal
 title('The Full Trajectory')
 

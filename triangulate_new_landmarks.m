@@ -37,13 +37,21 @@ new_index_kp = [];
 % Triangulate candidates
 for i=1:length(S_crt.C)
     
-    camera_ex_C = [T_WC_crt(1:3,1:3) T_WC_crt(1:3,4)];
+%     camera_ex_C = [T_WC_crt(1:3,1:3) T_WC_crt(1:3,4)];
+    camera_ex_C = [T_WC_crt(1:3,1:3)' -T_WC_crt(1:3,1:3)'*T_WC_crt(1:3,4)]; %%% Changed
     M_C = parameter.K * camera_ex_C;
 
-    camera_ex_F = [S_crt.T(1:3,1:3,i) S_crt.T(1:3,4,i)];
+%     camera_ex_F = [S_crt.T(1:3,1:3,i) S_crt.T(1:3,4,i)];
+    camera_ex_F = [S_crt.T(1:3,1:3,i)' -S_crt.T(1:3,1:3,i)'*S_crt.T(1:3,4,i)]; %%% Changed
+
     M_F = parameter.K * camera_ex_F;
 
-    X = linearTriangulation([S_crt.C(i,:)'; 1], [S_crt.F(i,:)'; 1] , M_C, M_F);
+%     X = linearTriangulation([S_crt.C(i,:)'; 1], [S_crt.F(i,:)'; 1] , M_C, M_F);
+    X = linearTriangulation([S_crt.F(i,:)'; 1], [S_crt.C(i,:)'; 1], M_F, M_C); %%%Changed
+
+    if X(3) < 0
+        warning('Point behind camera');
+    end
     
     % Bearing angle:
     a = T_WC_crt(1:3,4)-X(1:3);

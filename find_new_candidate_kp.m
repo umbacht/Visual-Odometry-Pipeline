@@ -15,7 +15,7 @@ function S_crt = find_new_candidate_kp(image_crt, S_crt, T_WC_crt, parameter)
     keypoints = flipud(keypoints')';
     new_kps = ones(length(keypoints), 1);
 
-    for i = 1:length(keypoints)
+    for i = 1:length(keypoints) %%% THis for loop can be replaced by pdist2()
         distances = [sqrt(sum((keypoints(i, :) - database_keypoints).^2, 2))];
 
         sorted_dists = sort(distances);
