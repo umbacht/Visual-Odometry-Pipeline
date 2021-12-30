@@ -20,7 +20,7 @@ if ds == 0 % KITTI
     assert(exist('kitti_path', 'var') ~= 0);
     ground_truth = load([kitti_path '/poses/05.txt']);
     ground_truth = ground_truth(:, [end-8 end]);
-    last_frame = 4540;
+    last_frame = 2760;
     
     % Parameters
     parameter.K = [7.188560000000e+02 0 6.071928000000e+02
@@ -49,7 +49,7 @@ if ds == 0 % KITTI
     % New keypoints
     parameter.num_keypoints = 300;%300
     parameter.threshold = 5; %Minimum distance to previous
-    parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
+    parameter.angle_threshold = 5/180*pi; % Bearing angle threshold
 
 
 elseif ds == 1 % MALAGA
@@ -124,7 +124,7 @@ elseif ds == 2 % PARKING
     % New keypoints
     parameter.num_keypoints = 300;
     parameter.threshold = 15; %Minimum distance to previous
-    parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
+    parameter.angle_threshold = 10/180*pi; % Bearing angle threshold
 
 else
     assert(false);

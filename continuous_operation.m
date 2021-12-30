@@ -110,9 +110,17 @@ Plotting: plot(y,x)
     
     S_crt = find_new_candidate_kp(image_crt, S_crt, T_WC_crt, parameter);
    
-    %% Delete Old Candidate KeyPoints
+    %% Delete KeyPoints and Landmarks which are behind the Camera 
+    % or out of scene
+   
+    % Get the mean distance of landmarks expressed in the camera frame
+    landmarks_cameraframe = T_WC_crt \ ([S_crt.X, ones(length(S_crt.X),1)]');
+    z_coordinate = landmarks_cameraframe(3, :);
+    
+    S_crt.X = S_crt.X(z_coordinate>0 & z_coordinate<200, 1:3);
+    S_crt.P = S_crt.P(z_coordinate>0 & z_coordinate<200, :);
 %     num_std = 1000;
-%     X_c = (inv(T_WC_crt) * [S_crt.X, ones(length(S_crt.P), 1)]')';
+%     X_c = (T_WC_crt\[S_crt.X, ones(length(S_crt.P), 1)]')';
 %     Z_c = X_c(:, 3);
 %     mean_z = mean(Z_c);
 %     std_z = std(Z_c);
