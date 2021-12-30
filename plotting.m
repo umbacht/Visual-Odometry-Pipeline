@@ -9,38 +9,40 @@ xzCoordinates(:,crtIdx) = T_WC_crt([1,3],end);
 % xzCoordinatesWC(:,crtIdx) = T_WC_crt([1,3],end);
 numMatched3dPoints(crtIdx) = size(S_crt.X,1);
 
+% initialize plot and make full screen
 figure(2)
+set(gcf, 'Units','normalized','Position',[0 0 1 1])
 
 % plot current image with landmarks
-subplot(4,4,[1,2,5,6]) % NEED CHANGE LATER, the position of the plot 
+subplot(4,5,[1,2,6,7]) % NEED CHANGE LATER, the position of the plot 
 imshow(image_crt)
 hold on
-plot(S_crt.C(:, 1), S_crt.C(:, 2), 'rx'); % plot candidate keypoints C
-plot(S_crt.P(:, 1), S_crt.P(:, 2), 'gx'); % plot keypoints P
+plot(S_crt.C(:, 1), S_crt.C(:, 2), 'rx', 'MarkerSize',3); % plot candidate keypoints C
+plot(S_crt.P(:, 1), S_crt.P(:, 2), 'gx', 'MarkerSize',3); % plot keypoints P
 hold off
 title('Current Image')
 
 % plot number of matched 3d points over last 20 frames
-subplot(4,4,[9,13])
+subplot(4,5,[11,16])
 plot(-19:0, numMatched3dPoints(last20Frameidx))
-title('The number of matched 3d points over last 20 frames')
+title('# tracked landmarks over last 20 frames')
 
 % plot the full trajectory
-subplot(4,4,[10,14])
+subplot(4,5,[12,17])
 plot(xzCoordinates(1,19:crtIdx),xzCoordinates(2,19:crtIdx)) %%%Edited
 axis equal
-title('The Full Trajectory')
+title('Full Trajectory')
 
 % plot the trajectory of last 20 frames and landmarks view from above
-r1 = subplot(4,4,[3,4,7,8,11,12,15,16]);
+r1 = subplot(4,5,[3,4,5,8,9,10,13,14,15,18,19,20]);
 cla(r1);
 hold on
-plot(xzCoordinates(1,last20Frameidx),xzCoordinates(2,last20Frameidx),'rx','linewidth',3)
+plot(xzCoordinates(1,last20Frameidx),xzCoordinates(2,last20Frameidx),'-x','MarkerSize',3)
 
-plot(S_crt.X(:,1),S_crt.X(:,3),'gx')
+plot(S_crt.X(:,1),S_crt.X(:,3),'k.')
 hold off
 axis equal
-title('the trajectory of last 20 frames and landmarks view from above')
+title('Trajectory of last 20 frames and landmarks')
 
 
 % set(gcf, 'GraphicsSmoothing', 'on')
