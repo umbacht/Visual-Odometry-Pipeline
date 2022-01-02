@@ -28,25 +28,27 @@ cameraParams = cameraParameters('IntrinsicMatrix',K,'TangentialDistortion',tange
 
 last_frame = 2116;
 
-for i = 1:2
-    image = imread([walking_path '/images/' sprintf('Image_%d.jpg',i)]);
-    image = rgb2gray(image);
-    %imshow(image);
-    %pause(0.01)
-
-    % Undistort image and safe in dataset
-    J = undistortImage(image,cameraParams);
-    imwrite(J,[walking_path '/undistorted_images/' sprintf('Image_%d.jpg',i)]);
-
-end
+% Undistort Images: 
+% for i = 1:last_frame
+%     image = imread([walking_path '/images/' sprintf('Image_%d.jpg',i)]);
+%     image = rgb2gray(image);
+%     %imshow(image);
+%     %pause(0.01)
+% 
+%     % Undistort image and safe in dataset
+%     J = undistortImage(image,cameraParams);
+%     imwrite(J,[walking_path '/undistorted_images/' sprintf('Image_%d.jpg',i)]);
+% end
 
 
 % calibration:
 % PROBLEM: Datatype is 3024x4032x4 (last one is 255)
-%images = imageDatastore(fullfile([walking_path '/calibration_images/']));
-% images = imageDatastore(fullfile(toolboxdir('vision'),'visiondata','calibration','mono'));
+
+% images = imageDatastore(fullfile([walking_path '/calibration_images/']));
+% %images = imageDatastore(fullfile(toolboxdir('vision'),'visiondata','calibration','mono'));
+% 
 % [imagePoints, boardSize] = detectCheckerboardPoints(images.Files);
-% squareSize = 29; &ours: 27
+% squareSize = 27; %ours: 27
 % worldPoints = generateCheckerboardPoints(boardSize,squareSize);
 % I = readimage(images,1);
 % imageSize = [size(I,1),size(I,2)];
