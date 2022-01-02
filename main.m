@@ -248,7 +248,9 @@ for i = range
     [numMatched3dPoints, xzCoordinates, last20Frameidx] = ...
         plotting(S_crt, T_WC_crt, image_crt, numMatched3dPoints, xzCoordinates, last20Frameidx);
     % Makes sure that plots refresh.    
-    pause(0.01);
+    if ds ~= 3
+        pause(0.01);
+    end
     
     image_prv = image_crt;
     S_prv = S_crt;
