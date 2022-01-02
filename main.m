@@ -131,12 +131,10 @@ elseif ds == 2 % PARKING
 elseif ds == 3 % WALKING
     % Path containing images, depths and all...
     assert(exist('walking_path', 'var') ~= 0);
-    last_frame = 2822;
-%     ground_truth = load([walking_path '/poses.txt']);
-%     ground_truth = ground_truth(:, [end-8 end]);
+    last_frame = 2116;
 
     % Parameters
-    parameter.K = load(['/K.txt']);
+    parameter.K = load([walking_path '/K.txt']);
     parameter.bootstrap_frames = [1, 2];
     % Continuous:
     % PointTracker
@@ -188,10 +186,10 @@ elseif ds == 2
     img1 = rgb2gray(imread([parking_path ...
         sprintf('/images/img_%05d.png',parameter.bootstrap_frames(2))]));
 elseif ds == 3 
-    img0 = rgb2gray(imread([walking_path ...
-        sprintf('/img_%04d.jpg',parameter.bootstrap_frames(1))]));
-    img1 = rgb2gray(imread([walking_path ...
-        sprintf('/img_%04d.jpg',parameter.bootstrap_frames(2))]));
+    img0 = imread([walking_path '/images_undistorted/' ...
+        sprintf('Image_%d.jpg',parameter.bootstrap_frames(1))]);
+    img1 = imread([walking_path '/images_undistorted/'...
+        sprintf('Image_%d.jpg',parameter.bootstrap_frames(2))]);
 else
     assert(false);
 end
@@ -238,8 +236,8 @@ for i = range
         image_crt = im2uint8(rgb2gray(imread([parking_path ...
             sprintf('/images/img_%05d.png',i)])));
     elseif ds == 3
-    image_crt = im2uint8(rgb2gray(imread([walking_path ...
-        sprintf('/img_%04d.jpg',i)])));
+    image_crt = im2uint8(imread([walking_path '/images_undistorted/' ...
+        sprintf('Image_%d.jpg',i)]));
     else
         assert(false);
     end
