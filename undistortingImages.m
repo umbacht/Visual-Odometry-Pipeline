@@ -29,7 +29,7 @@ cameraParams = cameraParameters('IntrinsicMatrix',K,'TangentialDistortion',tange
 
 last_frame = 2116;
 
-Undistort Images: 
+% Undistort Images: 
 for i = 1:last_frame
     image = imread([walking_path '/images/' sprintf('Image_%d.jpg',i)]);
     image = rgb2gray(image);
