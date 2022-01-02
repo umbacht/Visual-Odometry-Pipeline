@@ -6,7 +6,7 @@ close all;
 kitti_path = '../datasets/kitti';
 malaga_path = '../datasets/malaga';
 parking_path = '../datasets/parking';
-walking_path = '/Users/lucadipierno/Desktop/9.Semester/Vision Algorithms for Robotics/Mini Project_VAR/Own_calibrations_datasets/images/video_images/walking';
+walking_path = '../datasets/walking_horz_video';
 
 addpath(kitti_path);
 addpath(parking_path);
@@ -136,7 +136,7 @@ elseif ds == 3 % WALKING
 %     ground_truth = ground_truth(:, [end-8 end]);
 
     % Parameters
-    parameter.K = load(['/Users/lucadipierno/Desktop/9.Semester/Vision Algorithms for Robotics/Mini Project_VAR/Own_calibrations_datasets/images/video_images/K.txt']);
+    parameter.K = load(['/K.txt']);
     parameter.bootstrap_frames = [1, 2];
     % Continuous:
     % PointTracker
