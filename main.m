@@ -6,14 +6,16 @@ close all;
 kitti_path = '../datasets/kitti';
 malaga_path = '../datasets/malaga';
 parking_path = '../datasets/parking';
+walking_path = '/Users/lucadipierno/Desktop/9.Semester/Vision Algorithms for Robotics/Mini Project_VAR/Own_calibrations_datasets/images/video_images/walking';
 
 addpath(kitti_path);
 addpath(parking_path);
-addpath(malaga_path)
+addpath(malaga_path);
+addpath(walking_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking
+ds = 3; % 0: KITTI, 1: Malaga, 2: parking 3: walking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -126,6 +128,41 @@ elseif ds == 2 % PARKING
     parameter.threshold = 15; %Minimum distance to previous
     parameter.angle_threshold = 10/180*pi; % Bearing angle threshold
 
+elseif ds == 3 % WALKING
+    % Path containing images, depths and all...
+    assert(exist('walking_path', 'var') ~= 0);
+    last_frame = 2822;
+%     ground_truth = load([walking_path '/poses.txt']);
+%     ground_truth = ground_truth(:, [end-8 end]);
+
+    % Parameters
+    parameter.K = load(['/Users/lucadipierno/Desktop/9.Semester/Vision Algorithms for Robotics/Mini Project_VAR/Own_calibrations_datasets/images/video_images/K.txt']);
+    parameter.bootstrap_frames = [1, 2];
+    % Continuous:
+    % PointTracker
+    parameter.MaxBidirectionalError_cont = 0.8;
+    parameter.NumPyramidLevels_cont = 6;
+    parameter.BlockSize_cont = [21 21];
+    parameter.MaxIterations_cont = 40;
+    % Triangulation of new landmarks
+    % PointTracker
+    parameter.MaxBidirectionalError_triang = 0.8;
+    parameter.NumPyramidLevels_triang = 6;
+    parameter.BlockSize_triang = [21 21];
+    parameter.MaxIterations_triang = 40;
+    % Find new candidates:
+    % Harris 
+    parameter.corner_patch_size = 9;
+    parameter.harris_patch_size = 9;
+    parameter.harris_kappa = 0.08;
+    parameter.nonmaximum_supression_radius = 20;
+    parameter.descriptor_radius = 9;
+    parameter.match_lambda = 4;
+    % New keypoints
+    parameter.num_keypoints = 300;
+    parameter.threshold = 15; %Minimum distance to previous
+    parameter.angle_threshold = 10/180*pi; % Bearing angle threshold
+    
 else
     assert(false);
 end
@@ -150,6 +187,11 @@ elseif ds == 2
         sprintf('/images/img_%05d.png',parameter.bootstrap_frames(1))]));
     img1 = rgb2gray(imread([parking_path ...
         sprintf('/images/img_%05d.png',parameter.bootstrap_frames(2))]));
+elseif ds == 3 
+    img0 = rgb2gray(imread([walking_path ...
+        sprintf('/img_%04d.jpg',parameter.bootstrap_frames(1))]));
+    img1 = rgb2gray(imread([walking_path ...
+        sprintf('/img_%04d.jpg',parameter.bootstrap_frames(2))]));
 else
     assert(false);
 end
@@ -162,7 +204,7 @@ end
 S_prv.P = P1(1:2,:)';
 S_prv.X = X1(1:3,:)';
 S_prv.C = [];
-S_prv.F = [];
+S_prv.F = [];   
 S_prv.T = [];
 
 T_WC_prv = [T1; 0 0 0 1];
@@ -195,6 +237,9 @@ for i = range
     elseif ds == 2
         image_crt = im2uint8(rgb2gray(imread([parking_path ...
             sprintf('/images/img_%05d.png',i)])));
+    elseif ds == 3
+    image_crt = im2uint8(rgb2gray(imread([walking_path ...
+        sprintf('/img_%04d.jpg',i)])));
     else
         assert(false);
     end
