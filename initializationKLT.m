@@ -1,4 +1,4 @@
-function [P1,X1,T1] = initializationKLT(image1, image2, parameter)
+function [P1,X1,T1] = initializationKLT(init_frames, parameter)
 
 % Parameters from main.
 K = parameter.K;
@@ -8,6 +8,7 @@ nonmaximum_supression_radius = parameter.nonmaximum_supression_radius;
 num_keypoints = parameter.num_keypoints;
 
 %% Find Harris keypoints for first image
+image1 = init_frames{1};
 harris1 = harris(image1, harris_patch_size, harris_kappa);
 
 % figure(111)
@@ -23,18 +24,46 @@ keypoints1 = selectKeypoints(harris1, num_keypoints, nonmaximum_supression_radiu
 % plot(keypoints1(2, :), keypoints1(1, :), 'rx', 'Linewidth', 2);
 
 %% KLT
-% KLT with Vision Toolbox PointTracker
-    pointTracker = vision.PointTracker('MaxIterations', 30, 'BlockSize', [31,31]);
-    initialize(pointTracker, flipud(keypoints1)', image1);
+% % KLT with Vision Toolbox PointTracker
+%     pointTracker = vision.PointTracker('MaxIterations', 30, 'BlockSize', [31,31]);
+%     initialize(pointTracker, flipud(keypoints1)', image1);
+% 
+%     [tracked_points,point_validity] = pointTracker(image2);
+%     nnz(point_validity)
+% % Get valid tracked points in crt image
+%     tracked_keypoints2 = tracked_points(point_validity,:);
+% 
+% % Get valid tracked points in prv image
+%     tracked_keypoints1 = flipud(keypoints1(:,point_validity))';
+%     release(pointTracker);
 
-    [tracked_points,point_validity] = pointTracker(image2);
+pointTracker = vision.PointTracker('MaxIterations', 30, 'BlockSize', [31,31]);
     
-% Get valid tracked points in crt image
+frame1 = image1;
+kpts1 = flipud(keypoints1)';
+for i = 2:(size(init_frames,1)-1)
+    frame2 = init_frames{i};
+
+    initialize(pointTracker, kpts1, frame1);
+    [tracked_points,point_validity] = pointTracker(frame2);
+    nnz(point_validity)
+% Get valid tracked points in frame i
     tracked_keypoints2 = tracked_points(point_validity,:);
 
-% Get valid tracked points in prv image
-    tracked_keypoints1 = flipud(keypoints1(:,point_validity))';
+% Get valid tracked points in initial frame
+    if i==2
+%             tracked_keypoints1 = flipud(keypoints1(:,point_validity))';
+        tracked_keypoints1 = kpts1(point_validity,:);
+    else
+        tracked_keypoints1 = tracked_keypoints1(point_validity,:);
+    end
+    frame1 = frame2;
+    kpts1 = tracked_keypoints2;
+
     release(pointTracker);
+end
+    
+
 
 %% Create homogenous coordinates:
 p1 = [tracked_keypoints1';ones(1,size(tracked_keypoints1,1))];
@@ -47,7 +76,7 @@ p2 = [tracked_keypoints2';ones(1,size(tracked_keypoints2,1))];
 [F, inliersIndex] = estimateFundamentalMatrix(p1_tilda(1:2,:)', p2_tilda(1:2,:)', ...
      'Method','RANSAC', 'NumTrials',2000, 'DistanceThreshold',1e-4);
 
-inlier_ratio =  nnz(inliersIndex)/size(inliersIndex,1);
+inlier_ratio =  nnz(inliersIndex)/size(inliersIndex,1)
 
 F = (T2.') * F * T1;
 

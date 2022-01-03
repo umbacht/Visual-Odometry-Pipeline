@@ -15,7 +15,7 @@ addpath(walking_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking 3: walking
+ds = 2; % 0: KITTI, 1: Malaga, 2: parking 3: walking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -28,7 +28,7 @@ if ds == 0 % KITTI
     parameter.K = [7.188560000000e+02 0 6.071928000000e+02
         0 7.188560000000e+02 1.852157000000e+02
         0 0 1];
-    parameter.bootstrap_frames = [0, 2];
+    parameter.bootstrap_frames = [0, 10];
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
     parameter.NumPyramidLevels_cont = 6;
@@ -66,7 +66,7 @@ elseif ds == 1 % MALAGA
     parameter.K = [621.18428 0 404.0076
         0 621.18428 309.05989
         0 0 1];
-    parameter.bootstrap_frames = [1, 3];
+    parameter.bootstrap_frames = [1, 10];
     % Continuous:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
@@ -102,7 +102,7 @@ elseif ds == 2 % PARKING
 
     % Parameters
     parameter.K = load([parking_path '/K.txt']);
-    parameter.bootstrap_frames = [0, 2];
+    parameter.bootstrap_frames = [0, 10];
     % Continuous:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
@@ -167,35 +167,35 @@ end
 
 %% Bootstrap
 % need to set bootstrap_frames
+init_frames = cell(parameter.bootstrap_frames(2)-parameter.bootstrap_frames(1)+1,1);
+init_frame_ids = parameter.bootstrap_frames(1):parameter.bootstrap_frames(2);
 
 if ds == 0
-    img0 = imread([kitti_path '/05/image_0/' ...
-        sprintf('%06d.png',parameter.bootstrap_frames(1))]);
-    img1 = imread([kitti_path '/05/image_0/' ...
-        sprintf('%06d.png',parameter.bootstrap_frames(2))]);
+    for i = 1:size(init_frame_ids,2)
+        init_frames{i} = imread([kitti_path '/05/image_0/' ...
+            sprintf('%06d.png',init_frame_ids(i))]);
+    end
 elseif ds == 1
-    img0 = rgb2gray(imread([malaga_path ...
-        '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
-        left_images(parameter.bootstrap_frames(1)).name]));
-    img1 = rgb2gray(imread([malaga_path ...
-        '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
-        left_images(parameter.bootstrap_frames(2)).name]));
+    for i = 1:size(init_frame_ids,2)
+        init_frames{i} = rgb2gray(imread([malaga_path ...
+            '/malaga-urban-dataset-extract-07_rectified_800x600_Images/' ...
+            left_images(init_frame_ids(i)).name]));
+    end
 elseif ds == 2
-    img0 = rgb2gray(imread([parking_path ...
-        sprintf('/images/img_%05d.png',parameter.bootstrap_frames(1))]));
-    img1 = rgb2gray(imread([parking_path ...
-        sprintf('/images/img_%05d.png',parameter.bootstrap_frames(2))]));
+    for i = 1:size(init_frame_ids,2)
+        init_frames{i} = rgb2gray(imread([parking_path ...
+            sprintf('/images/img_%05d.png',init_frame_ids(i))]));
+    end
 elseif ds == 3 
-    img0 = imread([walking_path '/images_undistorted/' ...
-        sprintf('Image_%d.jpg',parameter.bootstrap_frames(1))]);
-    img1 = imread([walking_path '/images_undistorted/'...
-        sprintf('Image_%d.jpg',parameter.bootstrap_frames(2))]);
+    for i = 1:size(init_frame_ids,2)
+        init_frames{i} = imread([walking_path '/images_undistorted/' ...
+            sprintf('Image_%d.jpg',init_frame_ids(i))]);
+    end
 else
     assert(false);
 end
 
-[P1,X1, T1] = initializationKLT(img0, img1, parameter);
-
+[P1,X1, T1] = initializationKLT(init_frames, parameter);
 
 %% Continuous operation
 % Creating intial state
@@ -214,7 +214,7 @@ T_WC_prv = [T1; 0 0 0 1];
 % S_prv.P = keypoints_prv';
 
 range = (parameter.bootstrap_frames(2)+1):last_frame;
-image_prv = img1;
+image_prv = init_frames{1};
 
 % initialize data for plotting
 last20Frameidx = 1:20;
