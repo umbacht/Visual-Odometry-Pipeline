@@ -1,11 +1,11 @@
-function [P1,X1, C1, F1, T1] = initializationKLT(image1, image2, K)
+function [P1,X1,T1] = initializationKLT(image1, image2, parameter)
 
-% Parameters from exercise 3.
-harris_patch_size = 9;
-harris_kappa = 0.08;
-nonmaximum_supression_radius = 8;
-
-num_keypoints = 200;
+% Parameters from main.
+K = parameter.K;
+harris_patch_size = parameter.harris_patch_size;
+harris_kappa = parameter.harris_kappa;
+nonmaximum_supression_radius = parameter.nonmaximum_supression_radius;
+num_keypoints = parameter.num_keypoints;
 
 %% Find Harris keypoints for first image
 harris1 = harris(image1, harris_patch_size, harris_kappa);
@@ -67,9 +67,6 @@ X = linearTriangulation(p1,p2,M1,M2);
 %% Initialize state for continuous VO pipeline 
 P1 = p2;
 X1 = X;
-unmatched_keypoints2 = tracked_points(point_validity < 1, :)';
-C1 = unmatched_keypoints2;
-F1 = unmatched_keypoints2;
 T1 = [R_C2_W', -R_C2_W'*T_C2_W];
 
 
