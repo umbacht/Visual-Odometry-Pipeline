@@ -258,6 +258,3 @@ for i = range
     
 
 end
-
-% show image when finished
-imshow('finish.jpg')
