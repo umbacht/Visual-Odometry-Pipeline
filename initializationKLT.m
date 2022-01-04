@@ -37,7 +37,7 @@ keypoints1 = selectKeypoints(harris1, num_keypoints, nonmaximum_supression_radiu
 %     tracked_keypoints1 = flipud(keypoints1(:,point_validity))';
 %     release(pointTracker);
 
-pointTracker = vision.PointTracker('MaxIterations', 30, 'BlockSize', [31,31]);
+pointTracker = vision.PointTracker('MaxIterations', parameter.MaxIterations_init, 'BlockSize', parameter.BlockSize_init, 'MaxBidirectionalError', parameter.MaxBidirectionalError_init);
     
 frame1 = image1;
 kpts1 = flipud(keypoints1)';

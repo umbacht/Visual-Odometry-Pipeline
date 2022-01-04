@@ -15,7 +15,7 @@ addpath(walking_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking 3: walking
+ds = 3; % 0: KITTI, 1: Malaga, 2: parking 3: walking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -29,6 +29,14 @@ if ds == 0 % KITTI
         0 7.188560000000e+02 1.852157000000e+02
         0 0 1];
     parameter.bootstrap_frames = [0, 10];
+
+    % Initialization:
+    % PointTracker
+    parameter.MaxBidirectionalError_init = inf;
+    parameter.NumPyramidLevels_init = 3;
+    parameter.BlockSize_init = [31 31];
+    parameter.MaxIterations_init = 30;
+    % Continious:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
     parameter.NumPyramidLevels_cont = 6;
@@ -67,6 +75,12 @@ elseif ds == 1 % MALAGA
         0 621.18428 309.05989
         0 0 1];
     parameter.bootstrap_frames = [1, 10];
+    % Initialization:
+    % PointTracker
+    parameter.MaxBidirectionalError_init = inf;
+    parameter.NumPyramidLevels_init = 3;
+    parameter.BlockSize_init = [31 31];
+    parameter.MaxIterations_init = 30;
     % Continuous:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
@@ -103,6 +117,12 @@ elseif ds == 2 % PARKING
     % Parameters
     parameter.K = load([parking_path '/K.txt']);
     parameter.bootstrap_frames = [0, 10];
+    % Initialization:
+    % PointTracker
+    parameter.MaxBidirectionalError_init = inf;
+    parameter.NumPyramidLevels_init = 3;
+    parameter.BlockSize_init = [31 31];
+    parameter.MaxIterations_init = 30;
     % Continuous:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 0.8;
@@ -136,6 +156,12 @@ elseif ds == 3 % WALKING
     % Parameters
     parameter.K = load([walking_path '/K.txt']);
     parameter.bootstrap_frames = [375, 380];
+    % Initialization:
+    % PointTracker
+    parameter.MaxBidirectionalError_init = inf;
+    parameter.NumPyramidLevels_init = 3;
+    parameter.BlockSize_init = [31 31];
+    parameter.MaxIterations_init = 30;
     % Continuous:
     % PointTracker
     parameter.MaxBidirectionalError_cont = 1.2; %0.8
