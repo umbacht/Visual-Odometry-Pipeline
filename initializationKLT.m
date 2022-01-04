@@ -76,7 +76,7 @@ p2 = [tracked_keypoints2';ones(1,size(tracked_keypoints2,1))];
 [F, inliersIndex] = estimateFundamentalMatrix(p1_tilda(1:2,:)', p2_tilda(1:2,:)', ...
      'Method','RANSAC', 'NumTrials',2000, 'DistanceThreshold',1e-4);
 
-inlier_ratio =  nnz(inliersIndex)/size(inliersIndex,1)
+inlier_ratio =  nnz(inliersIndex)/size(inliersIndex,1);
 
 F = (T2.') * F * T1;
 

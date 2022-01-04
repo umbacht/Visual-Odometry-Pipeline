@@ -1,8 +1,4 @@
 function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, T_WC_prv, parameter)
-    % 1. Associate keypoints in the crt frame to prv landmarks
-    % 2. Estimate current camera pose
-    % 3. Triangulate new landmarks not previously found
-
 %{
 S.P = [X,Y] Nx2
 S.X = [X,Y,Z] Nx3
@@ -10,7 +6,6 @@ S.C = [X,Y] Mx2
 S.F = [X,Y] Mx2
 S.T 
 
-Plotting: plot(y,x)
 %}
 
 %   Input: 
@@ -28,14 +23,7 @@ Plotting: plot(y,x)
 %     previous: prv
 
 %   Todo:
-%     PointTracker set values (improve because we only get little matches)
 %     estimateFundamentalMatrix set value
-%     Check transformation CW or WC
-%     Check if E is unique
-%     HOMOGENEOUS OR NOT STORING IN .X AND .P
-
-%   Paremeterlist:
-%     Kameraintrinsics K
     
 %% Match Keypoints from previous and current image with KLT
     landmarks_prv = S_prv.X;

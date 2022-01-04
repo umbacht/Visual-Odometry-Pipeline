@@ -15,7 +15,7 @@ addpath(walking_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 2; % 0: KITTI, 1: Malaga, 2: parking 3: walking
+ds = 0; % 0: KITTI, 1: Malaga, 2: parking 3: walking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -135,19 +135,19 @@ elseif ds == 3 % WALKING
 
     % Parameters
     parameter.K = load([walking_path '/K.txt']);
-    parameter.bootstrap_frames = [1, 2];
+    parameter.bootstrap_frames = [375, 380];
     % Continuous:
     % PointTracker
-    parameter.MaxBidirectionalError_cont = 0.8;
-    parameter.NumPyramidLevels_cont = 6;
-    parameter.BlockSize_cont = [21 21];
-    parameter.MaxIterations_cont = 40;
+    parameter.MaxBidirectionalError_cont = 1.2; %0.8
+    parameter.NumPyramidLevels_cont = 10; % 6
+    parameter.BlockSize_cont = [25 25]; %[21 21]
+    parameter.MaxIterations_cont = 50; %40
     % Triangulation of new landmarks
     % PointTracker
-    parameter.MaxBidirectionalError_triang = 0.8;
-    parameter.NumPyramidLevels_triang = 6;
-    parameter.BlockSize_triang = [21 21];
-    parameter.MaxIterations_triang = 40;
+    parameter.MaxBidirectionalError_triang = 1.2; %0.8;
+    parameter.NumPyramidLevels_triang = 10; 
+    parameter.BlockSize_triang = [25 25]; %[21 21];
+    parameter.MaxIterations_triang = 50; %40;
     % Find new candidates:
     % Harris 
     parameter.corner_patch_size = 9;
@@ -159,7 +159,7 @@ elseif ds == 3 % WALKING
     % New keypoints
     parameter.num_keypoints = 300;
     parameter.threshold = 15; %Minimum distance to previous
-    parameter.angle_threshold = 10/180*pi; % Bearing angle threshold
+    parameter.angle_threshold = 5/180*pi; % Bearing angle threshold 10
     
 else
     assert(false);
@@ -207,12 +207,6 @@ S_prv.T = [];
 
 T_WC_prv = [T1; 0 0 0 1];
 
-% % This needs to be fixed in initialization part: This is only needed for
-% Harris:
-% S_prv.X = S_prv.X(1:3,:)';
-% keypoints_prv = flipud(S_prv.P(1:2,:));
-% S_prv.P = keypoints_prv';
-
 range = (parameter.bootstrap_frames(2)+1):last_frame;
 image_prv = init_frames{1};
 
@@ -249,7 +243,7 @@ for i = range
         plotting(S_crt, T_WC_crt, image_crt, numMatched3dPoints, xzCoordinates, last20Frameidx);
     % Makes sure that plots refresh.    
     if ds ~= 3
-        pause(0.01);
+        pause(0.001);
     end
     
     image_prv = image_crt;
