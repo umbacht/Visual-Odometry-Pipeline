@@ -15,7 +15,7 @@ addpath(walking_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 3; % 0: KITTI, 1: Malaga, 2: parking 3: walking
+ds = 0; % 0: KITTI, 1: Malaga, 2: parking 3: walking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -29,7 +29,6 @@ if ds == 0 % KITTI
         0 7.188560000000e+02 1.852157000000e+02
         0 0 1];
     parameter.bootstrap_frames = [0, 10];
-
     % Initialization:
     % PointTracker
     parameter.MaxBidirectionalError_init = inf;
@@ -48,7 +47,7 @@ if ds == 0 % KITTI
     parameter.NumPyramidLevels_triang = 6;
     parameter.BlockSize_triang = [21 21];
     parameter.MaxIterations_triang = 40;
-    % Find new candidates:
+    % Used in Init and Cont:
     % Harris 
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
@@ -56,6 +55,10 @@ if ds == 0 % KITTI
     parameter.nonmaximum_supression_radius = 20;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
+    % Fundamental Matrix RANSAC
+    parameter.method = 'RANSAC';
+    parameter.NumTrials = 2000;
+    parameter.DistanceThreshold = 1e-4;
     % New keypoints
     parameter.num_keypoints = 300;%300
     parameter.threshold = 5; %Minimum distance to previous
@@ -69,7 +72,6 @@ elseif ds == 1 % MALAGA
         '/malaga-urban-dataset-extract-07_rectified_800x600_Images']);
     left_images = images(3:2:end);
     last_frame = length(left_images);
-
     % Parameters
     parameter.K = [621.18428 0 404.0076
         0 621.18428 309.05989
@@ -93,7 +95,7 @@ elseif ds == 1 % MALAGA
     parameter.NumPyramidLevels_triang = 6;
     parameter.BlockSize_triang = [21 21];
     parameter.MaxIterations_triang = 40;
-    % Find new candidates:
+    % Used in Init and Cont:
     % Harris 
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
@@ -101,6 +103,10 @@ elseif ds == 1 % MALAGA
     parameter.nonmaximum_supression_radius = 20;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
+    % Fundamental Matrix RANSAC
+    parameter.method = 'RANSAC';
+    parameter.NumTrials = 2000;
+    parameter.DistanceThreshold = 1e-4;
     % New keypoints
     parameter.num_keypoints = 300;
     parameter.threshold = 5; %Minimum distance to previous
@@ -113,7 +119,6 @@ elseif ds == 2 % PARKING
     last_frame = 598;
     ground_truth = load([parking_path '/poses.txt']);
     ground_truth = ground_truth(:, [end-8 end]);
-
     % Parameters
     parameter.K = load([parking_path '/K.txt']);
     parameter.bootstrap_frames = [0, 10];
@@ -135,7 +140,7 @@ elseif ds == 2 % PARKING
     parameter.NumPyramidLevels_triang = 6;
     parameter.BlockSize_triang = [21 21];
     parameter.MaxIterations_triang = 40;
-    % Find new candidates:
+    % Used in Init and Cont:
     % Harris 
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
@@ -143,6 +148,10 @@ elseif ds == 2 % PARKING
     parameter.nonmaximum_supression_radius = 20;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
+    % Fundamental Matrix RANSAC
+    parameter.method = 'RANSAC';
+    parameter.NumTrials = 2000;
+    parameter.DistanceThreshold = 1e-4;
     % New keypoints
     parameter.num_keypoints = 300;
     parameter.threshold = 15; %Minimum distance to previous
@@ -152,7 +161,6 @@ elseif ds == 3 % WALKING
     % Path containing images, depths and all...
     assert(exist('walking_path', 'var') ~= 0);
     last_frame = 2116;
-
     % Parameters
     parameter.K = load([walking_path '/K.txt']);
     parameter.bootstrap_frames = [375, 380];
@@ -174,7 +182,7 @@ elseif ds == 3 % WALKING
     parameter.NumPyramidLevels_triang = 10; 
     parameter.BlockSize_triang = [25 25]; %[21 21];
     parameter.MaxIterations_triang = 50; %40;
-    % Find new candidates:
+    % Used in Init and Cont:
     % Harris 
     parameter.corner_patch_size = 9;
     parameter.harris_patch_size = 9;
@@ -182,6 +190,10 @@ elseif ds == 3 % WALKING
     parameter.nonmaximum_supression_radius = 20;
     parameter.descriptor_radius = 9;
     parameter.match_lambda = 4;
+    % Fundamental Matrix RANSAC
+    parameter.method = 'RANSAC';
+    parameter.NumTrials = 2000;
+    parameter.DistanceThreshold = 1e-4;
     % New keypoints
     parameter.num_keypoints = 300;
     parameter.threshold = 15; %Minimum distance to previous
@@ -242,8 +254,7 @@ numMatched3dPoints = [zeros(1, 18), size(S_prv.X, 1), ...
                         zeros(1, last_frame - parameter.bootstrap_frames(2))];
 xzCoordinates = [zeros(2, 18), T_WC_prv([1, 3], end), ...
                        zeros(2, last_frame - parameter.bootstrap_frames(2))];
-                   
-                            
+                                              
 for i = range
     fprintf('\n\nProcessing frame %d\n=====================\n', i);
     if ds == 0
@@ -264,17 +275,16 @@ for i = range
 
     [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, T_WC_prv,parameter);
     
-    % plotting
+    % Plotting
     [numMatched3dPoints, xzCoordinates, last20Frameidx] = ...
         plotting(S_crt, T_WC_crt, image_crt, numMatched3dPoints, xzCoordinates, last20Frameidx);
     % Makes sure that plots refresh.    
     if ds ~= 3
-        pause(0.001);
+        pause(0.01);
     end
     
     image_prv = image_crt;
     S_prv = S_crt;
     T_WC_prv = T_WC_crt;
-    
 
 end
