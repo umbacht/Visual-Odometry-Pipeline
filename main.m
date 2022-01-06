@@ -15,7 +15,7 @@ addpath(walking_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 0; % 0: KITTI, 1: Malaga, 2: parking 3: walking
+ds = 3; % 0: KITTI, 1: Malaga, 2: parking 3: walking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -162,7 +162,7 @@ elseif ds == 3 % WALKING
     assert(exist('walking_path', 'var') ~= 0);
     last_frame = 2116;
     % Parameters
-    parameter.K = load([walking_path '/K.txt']);
+    parameter.K = load([walking_path '/K_resized.txt']);
     parameter.bootstrap_frames = [375, 380];
     % Initialization:
     % PointTracker
@@ -226,7 +226,7 @@ elseif ds == 2
     end
 elseif ds == 3 
     for i = 1:size(init_frame_ids,2)
-        init_frames{i} = imread([walking_path '/images_undistorted/' ...
+        init_frames{i} = imread([walking_path '/old_30Hz/images_resized/' ...
             sprintf('Image_%d.jpg',init_frame_ids(i))]);
     end
 else
@@ -267,7 +267,7 @@ for i = range
         image_crt = im2uint8(rgb2gray(imread([parking_path ...
             sprintf('/images/img_%05d.png',i)])));
     elseif ds == 3
-    image_crt = im2uint8(imread([walking_path '/images_undistorted/' ...
+    image_crt = im2uint8(imread([walking_path '/old_30Hz/images_resized/' ...
         sprintf('Image_%d.jpg',i)]));
     else
         assert(false);
