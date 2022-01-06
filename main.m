@@ -17,7 +17,7 @@ addpath(walking2_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 3; % 0: KITTI, 1: Malaga, 2: parking, 3: walking1, 4: walking2
+ds = 2; % 0: KITTI, 1: Malaga, 2: parking, 3: walking1, 4: walking2
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -65,6 +65,7 @@ if ds == 0 % KITTI
     parameter.num_keypoints = 300;%300
     parameter.threshold = 5; %Minimum distance to previous
     parameter.angle_threshold = 5/180*pi; % Bearing angle threshold
+    parameter.max_distance = 1500;
 
 
 elseif ds == 1 % MALAGA
@@ -113,6 +114,7 @@ elseif ds == 1 % MALAGA
     parameter.num_keypoints = 300;
     parameter.threshold = 5; %Minimum distance to previous
     parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
+    parameter.max_distance = 1500;
 
 
 elseif ds == 2 % PARKING
@@ -158,6 +160,7 @@ elseif ds == 2 % PARKING
     parameter.num_keypoints = 300;
     parameter.threshold = 15; %Minimum distance to previous
     parameter.angle_threshold = 10/180*pi; % Bearing angle threshold
+    parameter.max_distance = 1500;
 
 elseif ds == 3 % WALKING
     % Path containing images, depths and all...
@@ -173,9 +176,9 @@ elseif ds == 3 % WALKING
     parameter.MaxIterations_init = 30;
     % Continuous:
     % PointTracker
-    parameter.MaxBidirectionalError_cont = 1.2; %0.8
-    parameter.NumPyramidLevels_cont = 10; % 6
-    parameter.BlockSize_cont = [25 25]; %[21 21]
+    parameter.MaxBidirectionalError_cont = 0.8; %1.2
+    parameter.NumPyramidLevels_cont = 6; % 10
+    parameter.BlockSize_cont = [21 21]; %[25 25]
     parameter.MaxIterations_cont = 50; %40
     % Triangulation of new landmarks
     % PointTracker
@@ -198,7 +201,8 @@ elseif ds == 3 % WALKING
     % New keypoints
     parameter.num_keypoints = 300;
     parameter.threshold = 15; %Minimum distance to previous
-    parameter.angle_threshold = 5/180*pi; % Bearing angle threshold 10
+    parameter.angle_threshold = 3/180*pi; % Bearing angle threshold 10
+    parameter.max_distance = 200;
 
     elseif ds == 4 % WALKING 2
     % Path containing images, depths and all...
@@ -239,7 +243,8 @@ elseif ds == 3 % WALKING
     % New keypoints
     parameter.num_keypoints = 300;
     parameter.threshold = 15; %Minimum distance to previous
-    parameter.angle_threshold = 5/180*pi; % Bearing angle threshold 10
+    parameter.angle_threshold = 3/180*pi; % Bearing angle threshold 10
+    parameter.max_distance = 200;
     
 else
     assert(false);

@@ -75,11 +75,11 @@ function [S_crt, T_WC_crt] = continuous_operation(image_crt, image_prv, S_prv, T
     
     S_crt = find_new_candidate_kp(image_crt, S_crt, T_WC_crt, parameter);
    
-    %% Delete KeyPoints and Landmarks which are behind the Camera
+    %% Delete KeyPoints and Landmarks which are behind the Camera or very far away
     landmarks_cameraframe = T_WC_crt \ ([S_crt.X, ones(length(S_crt.X),1)]');
     z_coordinate = landmarks_cameraframe(3, :);
     
-    S_crt.X = S_crt.X(z_coordinate>0 , 1:3);
-    S_crt.P = S_crt.P(z_coordinate>0 , :);
+    S_crt.X = S_crt.X(z_coordinate>0 & z_coordinate<parameter.max_distance, 1:3);
+    S_crt.P = S_crt.P(z_coordinate>0 & z_coordinate<parameter.max_distance, :);
     
 end
