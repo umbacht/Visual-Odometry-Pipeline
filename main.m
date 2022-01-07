@@ -17,7 +17,7 @@ addpath(walking2_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 2; % 0: KITTI, 1: Malaga, 2: parking, 3: walking1, 4: walking2
+ds = 4; % 0: KITTI, 1: Malaga, 2: parking, 3: walking1, 4: walking2
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -166,7 +166,7 @@ elseif ds == 3 % WALKING
     % Path containing images, depths and all...
     last_frame = 6713;
     % Parameters
-    parameter.K = load([walking1_path '/K_resized.txt']);
+    parameter.K = load([walking1_path '/K_walking1.txt']);
     parameter.bootstrap_frames = [1, 5];
     % Initialization:
     % PointTracker
@@ -208,8 +208,8 @@ elseif ds == 3 % WALKING
     % Path containing images, depths and all...
     last_frame = 4432;
     % Parameters
-    parameter.K = load([walking2_path '/K_resized.txt']);
-    parameter.bootstrap_frames = [1, 5];
+    parameter.K = load([walking2_path '/K_walking2.txt']);
+    parameter.bootstrap_frames = [2270 2275];%[2270, 2275];
     % Initialization:
     % PointTracker
     parameter.MaxBidirectionalError_init = inf;
@@ -278,7 +278,7 @@ elseif ds == 3
     end
 elseif ds == 4 
     for i = 1:size(init_frame_ids,2)
-        init_frames{i} = imread([walking2_path '/images_cropped/' ...
+        init_frames{i} = imread([walking2_path '/images_grayscale/' ...
             sprintf('Image_%d.jpg',init_frame_ids(i))]);
     end    
 else
@@ -322,7 +322,7 @@ for i = range
     image_crt = im2uint8(imread([walking1_path '/Images_60Hz_cropped/' ...
         sprintf('Image_%d.jpg',i)]));
     elseif ds == 4
-    image_crt = im2uint8(imread([walking2_path '/images_cropped/' ...
+    image_crt = im2uint8(imread([walking2_path '/images_grayscale/' ...
         sprintf('Image_%d.jpg',i)]));
     else
         assert(false);
