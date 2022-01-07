@@ -17,7 +17,7 @@ addpath(walking2_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 4; % 0: KITTI, 1: Malaga, 2: parking, 3: walking1, 4: walking2
+ds = 3; % 0: KITTI, 1: Malaga, 2: parking, 3: walking1, 4: walking2
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
@@ -162,30 +162,31 @@ elseif ds == 2 % PARKING
     parameter.angle_threshold = 10/180*pi; % Bearing angle threshold
     parameter.max_distance = 1500;
 
+
 elseif ds == 3 % WALKING
     % Path containing images, depths and all...
-    last_frame = 6713;
+    last_frame = 4432;
     % Parameters
-    parameter.K = load([walking1_path '/K_walking1.txt']);
-    parameter.bootstrap_frames = [1, 5];
+    parameter.K = load([walking2_path '/K_walking.txt']);
+    parameter.bootstrap_frames = [1 5];%[3655 3665];%[2270, 2275];
     % Initialization:
     % PointTracker
-    parameter.MaxBidirectionalError_init = inf;
-    parameter.NumPyramidLevels_init = 3;
-    parameter.BlockSize_init = [31 31];
-    parameter.MaxIterations_init = 30;
+    parameter.MaxBidirectionalError_init = 0.8;
+    parameter.NumPyramidLevels_init = 6;
+    parameter.BlockSize_init = [21 21];
+    parameter.MaxIterations_init = 40;
     % Continuous:
     % PointTracker
-    parameter.MaxBidirectionalError_cont = 0.8; %1.2
-    parameter.NumPyramidLevels_cont = 6; % 10
-    parameter.BlockSize_cont = [21 21]; %[25 25]
-    parameter.MaxIterations_cont = 50; %40
+    parameter.MaxBidirectionalError_cont = 0.8; %0.8
+    parameter.NumPyramidLevels_cont = 6; % 6
+    parameter.BlockSize_cont = [21 21]; %[21 21]
+    parameter.MaxIterations_cont = 40; %40
     % Triangulation of new landmarks
     % PointTracker
-    parameter.MaxBidirectionalError_triang = 1.2; %0.8;
+    parameter.MaxBidirectionalError_triang = 0.8; %0.8;
     parameter.NumPyramidLevels_triang = 10; 
-    parameter.BlockSize_triang = [25 25]; %[21 21];
-    parameter.MaxIterations_triang = 50; %40;
+    parameter.BlockSize_triang = [21 21]; %[21 21];
+    parameter.MaxIterations_triang = 40; %40;
     % Used in Init and Cont:
     % Harris 
     parameter.corner_patch_size = 9;
@@ -204,47 +205,7 @@ elseif ds == 3 % WALKING
     parameter.angle_threshold = 3/180*pi; % Bearing angle threshold 10
     parameter.max_distance = 200;
 
-    elseif ds == 4 % WALKING 2
-    % Path containing images, depths and all...
-    last_frame = 4432;
-    % Parameters
-    parameter.K = load([walking2_path '/K_walking2.txt']);
-    parameter.bootstrap_frames = [2270 2275];%[2270, 2275];
-    % Initialization:
-    % PointTracker
-    parameter.MaxBidirectionalError_init = inf;
-    parameter.NumPyramidLevels_init = 3;
-    parameter.BlockSize_init = [31 31];
-    parameter.MaxIterations_init = 30;
-    % Continuous:
-    % PointTracker
-    parameter.MaxBidirectionalError_cont = 1.2; %0.8
-    parameter.NumPyramidLevels_cont = 10; % 6
-    parameter.BlockSize_cont = [25 25]; %[21 21]
-    parameter.MaxIterations_cont = 50; %40
-    % Triangulation of new landmarks
-    % PointTracker
-    parameter.MaxBidirectionalError_triang = 1.2; %0.8;
-    parameter.NumPyramidLevels_triang = 10; 
-    parameter.BlockSize_triang = [25 25]; %[21 21];
-    parameter.MaxIterations_triang = 50; %40;
-    % Used in Init and Cont:
-    % Harris 
-    parameter.corner_patch_size = 9;
-    parameter.harris_patch_size = 9;
-    parameter.harris_kappa = 0.08;
-    parameter.nonmaximum_supression_radius = 20;
-    parameter.descriptor_radius = 9;
-    parameter.match_lambda = 4;
-    % Fundamental Matrix RANSAC
-    parameter.method = 'RANSAC';
-    parameter.NumTrials = 2000;
-    parameter.DistanceThreshold = 1e-4;
-    % New keypoints
-    parameter.num_keypoints = 300;
-    parameter.threshold = 15; %Minimum distance to previous
-    parameter.angle_threshold = 3/180*pi; % Bearing angle threshold 10
-    parameter.max_distance = 200;
+    parameter.distortion_frame = [75 50 1769 979];
     
 else
     assert(false);
@@ -273,12 +234,7 @@ elseif ds == 2
     end
 elseif ds == 3 
     for i = 1:size(init_frame_ids,2)
-        init_frames{i} = imread([walking1_path '/Images_60Hz_cropped/' ...
-            sprintf('Image_%d.jpg',init_frame_ids(i))]);
-    end
-elseif ds == 4 
-    for i = 1:size(init_frame_ids,2)
-        init_frames{i} = imread([walking2_path '/images_grayscale/' ...
+        init_frames{i} = imread([walking2_path '/image_distorted/' ...
             sprintf('Image_%d.jpg',init_frame_ids(i))]);
     end    
 else
@@ -319,10 +275,7 @@ for i = range
         image_crt = im2uint8(rgb2gray(imread([parking_path ...
             sprintf('/images/img_%05d.png',i)])));
     elseif ds == 3
-    image_crt = im2uint8(imread([walking1_path '/Images_60Hz_cropped/' ...
-        sprintf('Image_%d.jpg',i)]));
-    elseif ds == 4
-    image_crt = im2uint8(imread([walking2_path '/images_grayscale/' ...
+    image_crt = im2uint8(imread([walking2_path '/image_distorted/' ...
         sprintf('Image_%d.jpg',i)]));
     else
         assert(false);
