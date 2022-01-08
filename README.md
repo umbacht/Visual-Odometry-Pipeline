@@ -1,8 +1,7 @@
 # Visual-Odometry-Pipeline
-## Mini-Project Vision Algorithms for Mobile Robotics
 
 Mini-project for the course: *Vision Algorithms for Mobile Robotics*
-Authors: Wenqing Chang @wchang1011, Jeroen Riessbacher, Luca Di Pierno @Tarzanio, Thomas Umbach @umbacht
+Authors: Wenqing Chang @wchang1011, Jeroen Riessbacher @Tarzanio, Luca Di Pierno @ApocalyptoNicci, Thomas Umbach @umbacht
 
 ## Instructions to run the code:
 
@@ -30,10 +29,8 @@ main.m
 - [Parking](https://www.youtube.com/...)
 - [Walking (own)](https://www.youtube.com/...)
 
-## Specifications of machine on which screencasts were captured:
+### Specifications of machine on which screencasts were captured:
 - OS:
 - Max. number of threads:
 - CPU Freq.:
 - RAM: 
-
-## 
