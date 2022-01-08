@@ -5,8 +5,6 @@ crtIdx = last20Frameidx(end);
 T_CW_crt = [T_WC_crt(1:3,1:3)',  -T_WC_crt(1:3,1:3)'*T_WC_crt(1:3,4);
                 0,0,0,1];
 xzCoordinates(:,crtIdx) = T_WC_crt([1,3],end);
-% xzCoordinatesCW(:,crtIdx) = T_CW_crt([1,3],end);
-% xzCoordinatesWC(:,crtIdx) = T_WC_crt([1,3],end);
 numMatched3dPoints(crtIdx) = size(S_crt.X,1);
 
 % initialize plot and make full screen

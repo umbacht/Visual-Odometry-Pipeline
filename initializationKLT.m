@@ -2,7 +2,14 @@ function [P1,X1,T1] = initializationKLT(init_frames, parameter)
 
 %% Find Harris keypoints for first image
 image1 = init_frames{1};
-harris1 = harris(image1, parameter.harris_patch_size, parameter.harris_kappa);
+
+if isfield(parameter, 'distortion_frame')
+	image_croped = imcrop(image1, parameter.distortion_frame);
+	harris1 = harris(image_croped, parameter.harris_patch_size, parameter.harris_kappa);
+    harris1 = padarray(harris1, [parameter.distortion_frame(2),parameter.distortion_frame(1)],0);
+else
+	harris1 = harris(image1, parameter.harris_patch_size, parameter.harris_kappa);
+end
 
 keypoints1 = selectKeypoints(harris1, parameter.num_keypoints, parameter.nonmaximum_supression_radius);
 
