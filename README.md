@@ -25,7 +25,6 @@ Authors: Wenqing Chang @wchang1011, Jeroen Riessbacher @Tarzanio, Luca Di Pierno
 	
 - Run main.m
 
-
 ## Videos of datasets:
 - [KITTI](https://www.youtube.com/...)
 - [Malaga](https://www.youtube.com/...)
@@ -42,4 +41,3 @@ Authors: Wenqing Chang @wchang1011, Jeroen Riessbacher @Tarzanio, Luca Di Pierno
 - MATLAB_R2021b
 - Computer Vision Toolbox
 - Statistics and Machine Learning Toolbox
-- Video and image blockset
