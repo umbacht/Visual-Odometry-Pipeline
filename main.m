@@ -15,7 +15,7 @@ addpath(walking_path);
 addpath(genpath('Exercise Solutions'));
 
 %% Setup
-ds = 3; % 0: KITTI, 1: Malaga, 2: parking, 3: walking
+ds = 0; % 0: KITTI, 1: Malaga, 2: parking, 3: walking
 
 if ds == 0 % KITTI
     % need to set kitti_path to folder containing "05" and "poses"
