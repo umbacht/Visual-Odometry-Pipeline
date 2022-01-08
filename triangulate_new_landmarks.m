@@ -1,7 +1,16 @@
 function S_crt = triangulate_new_landmarks(image_crt, image_prv, S_crt, T_WC_crt, parameter)
+% Triangulate the 3D coordinates of new landmarks
+%
+% Input:
+% - Previous Image
+% - Current Image
+% - Previous State
+% - Current Camera Pose in World coordinates
+% - Paramter
+% Output:
+% - Current State
 
-%% Previois candidate KeyPoints Triangulation & Tracking
-% track previous candidates in the current image
+%% Track previous candidates in current image
 point_tracker = vision.PointTracker('MaxBidirectionalError', parameter.MaxBidirectionalError_triang, ...
                                'NumPyramidLevels', parameter.NumPyramidLevels_triang, ...
                                'BlockSize', parameter.BlockSize_triang, ...
@@ -18,7 +27,7 @@ release(point_tracker);
 
 new_index_kp = [];
 
-%% Triangulate candidates (Get 3D landmarks)
+%% Triangulate valid candidates
 for i=1:length(S_crt.C)
     
     camera_ex_C = [T_WC_crt(1:3,1:3)' -T_WC_crt(1:3,1:3)'*T_WC_crt(1:3,4)];
@@ -48,7 +57,7 @@ for i=1:length(S_crt.C)
     end
 end
 
-% Deleting new KeyPoints from candidate list
+% Deleting new added KeyPoints from candidate list
 S_crt.C(new_index_kp, :) = [];
 S_crt.F(new_index_kp, :) = [];
 S_crt.T(:, :, new_index_kp) = [];

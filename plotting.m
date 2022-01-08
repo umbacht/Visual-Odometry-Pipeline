@@ -1,5 +1,6 @@
 function [numMatched3dPoints, xzCoordinates, last20Frameidx] = ...
     plotting(S_crt, T_WC_crt, image_crt, numMatched3dPoints, xzCoordinates, last20Frameidx)
+%% Creating Plots of VO
 
 crtIdx = last20Frameidx(end);
 T_CW_crt = [T_WC_crt(1:3,1:3)',  -T_WC_crt(1:3,1:3)'*T_WC_crt(1:3,4);
@@ -41,9 +42,6 @@ plot(S_crt.X(:,1),S_crt.X(:,3),'k.')
 hold off
 axis equal
 title('Trajectory of last 20 frames and landmarks')
-
-
-% set(gcf, 'GraphicsSmoothing', 'on')
 
 % update indices
 last20Frameidx = last20Frameidx + 1;

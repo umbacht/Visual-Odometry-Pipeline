@@ -1,31 +1,33 @@
 function [P1,X1,T1] = initializationKLT(init_frames, parameter)
-
-%% Find Harris keypoints for first image
+% Establish initial pose of the camera from initial frames using Harris and
+% KLT PointTracker. First image becomes world coordinate frame
+%
+% Input: 
+% - Initial frames, 
+% - Parameters
+% Output: 
+% - Initial 3D Landmarks 4xN (Homogenous Coordinates [X,Y,Z,1]
+% - Corresponding 2D Keypoints 3xN (Homogeneous Coordinates [X,Y,1])
+ 
+%% Find Harris keypoints in first image
 image1 = init_frames{1};
 
+% Ignoring outer boundary from undistortion for own dataset
 if isfield(parameter, 'distortion_frame')
 	image_croped = imcrop(image1, parameter.distortion_frame);
-	harris1 = harris(image_croped, parameter.harris_patch_size, parameter.harris_kappa);
-    harris1 = padarray(harris1, [parameter.distortion_frame(2),parameter.distortion_frame(1)],0);
+	harris1 = harris(image_croped, parameter.harris_patch_size, ...
+        parameter.harris_kappa);
+    harris1 = padarray(harris1, [parameter.distortion_frame(2), ...
+        parameter.distortion_frame(1)],0);
 else
 	harris1 = harris(image1, parameter.harris_patch_size, parameter.harris_kappa);
 end
 
-keypoints1 = selectKeypoints(harris1, parameter.num_keypoints, parameter.nonmaximum_supression_radius);
+keypoints1 = selectKeypoints(harris1, parameter.num_keypoints, ...
+    parameter.nonmaximum_supression_radius);
 
-%% KLT
-% % KLT with Vision Toolbox PointTracker
-%     pointTracker = vision.PointTracker('MaxIterations', 30, 'BlockSize', [31,31]);
-%     initialize(pointTracker, flipud(keypoints1)', image1);
-% 
-%     [tracked_points,point_validity] = pointTracker(image2);
-%     nnz(point_validity)
-% % Get valid tracked points in crt image
-%     tracked_keypoints2 = tracked_points(point_validity,:);
-% 
-% % Get valid tracked points in prv image
-%     tracked_keypoints1 = flipud(keypoints1(:,point_validity))';
-%     release(pointTracker);
+%% KLT PointTracker
+% Tracking Harris corners through images
 
 pointTracker = vision.PointTracker('MaxIterations', ...
     parameter.MaxIterations_init, 'BlockSize', parameter.BlockSize_init, ...
@@ -39,10 +41,10 @@ for i = 2:(size(init_frames,1)-1)
     initialize(pointTracker, kpts1, frame1);
     [tracked_points,point_validity] = pointTracker(frame2);
     nnz(point_validity)
-% Get valid tracked points in frame i
+    % Get valid tracked points in frame i
     tracked_keypoints2 = tracked_points(point_validity,:);
 
-% Get valid tracked points in initial frame
+    % Get valid tracked points in initial frame
     if i==2
         tracked_keypoints1 = kpts1(point_validity,:);
     else
@@ -58,11 +60,12 @@ end
 p1 = [tracked_keypoints1';ones(1,size(tracked_keypoints1,1))];
 p2 = [tracked_keypoints2';ones(1,size(tracked_keypoints2,1))];
 
-%% Estimate Essential matrix. 
-%first normalize vectors 
+%% Estimate Fundamental matrix and derrive Essential Matrix (RANSAC)
+% Normalize points
 [p1_tilda,T1] = normalise2dpts(p1);
 [p2_tilda,T2] = normalise2dpts(p2);
 
+% 
 [F, inliersIndex] = estimateFundamentalMatrix(p1_tilda(1:2,:)', p2_tilda(1:2,:)', ...
      'Method',parameter.method, 'NumTrials',parameter.NumTrials, 'DistanceThreshold',parameter.DistanceThreshold);
 
@@ -71,7 +74,7 @@ inlier_ratio =  nnz(inliersIndex)/size(inliersIndex,1);
 F = (T2.') * F * T1;
 
 E = parameter.K'*F*parameter.K;
-%% use only inliers, and create homogenous coordinates:
+%% Discard outliers:
 p1 = p1(:, inliersIndex);
 p2 = p2(:, inliersIndex);
 
@@ -83,7 +86,7 @@ M1 = parameter.K * eye(3,4);
 M2 = parameter.K * [R_C2_W, T_C2_W];
 X = linearTriangulation(p1,p2,M1,M2);
 
-%% Initialize state for continuous VO pipeline 
+%% Initial State
 P1 = p2;
 X1 = X;
 T1 = [R_C2_W', -R_C2_W'*T_C2_W];

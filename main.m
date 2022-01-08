@@ -214,7 +214,6 @@ else
 end
 
 %% Bootstrap
-% need to set bootstrap_frames
 init_frames = cell(parameter.bootstrap_frames(2)-parameter.bootstrap_frames(1)+1,1);
 init_frame_ids = parameter.bootstrap_frames(1):parameter.bootstrap_frames(2);
 
@@ -246,7 +245,7 @@ end
 [P1,X1, T1] = initializationKLT(init_frames(1:parameter.n_th_element:end), parameter);
 
 %% Continuous operation
-% Creating intial state
+% Creating initial state
 S_prv.P = P1(1:2,:)';
 S_prv.X = X1(1:3,:)';
 S_prv.C = [];
