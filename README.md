@@ -9,19 +9,18 @@ Authors: Wenqing Chang @wchang1011, Jeroen Riessbacher @Tarzanio, Luca Di Pierno
 ### Directory setup:
 - All .m files in one file named "code" including the file "Exercise Solutions" containing the exercise solution scripts.
 - All datasets in file named "datasets" on same level as "code" file
-	Relative path for datasets:
-		1. "../datasets/kitti/"
-		2. "../datasets/malaga-urban-dataset-extract-07/"
-		3. "../datasets/parking/"
-		4. "../datasets/walking/"
 
-- In main.m: set parameter "ds" (line )
-- Run 
-main.m
+Relative path for datasets:
+1. "../datasets/kitti/"
+2. "../datasets/malaga-urban-dataset-extract-07/"
+3. "../datasets/parking/"
+4. "../datasets/walking/"
+
 
 ### Running the code
 
 - In main.m file: Set parameter ds to chose which dataset (0: KITTI, 1: Malaga, 2: Parking, 3: Self recorded walking)
+- Run main.m
 
 
 ## Videos of datasets:
