@@ -26,18 +26,19 @@ Authors: Wenqing Chang @wchang1011, Jeroen Riessbacher @Tarzanio, Luca Di Pierno
 - Run main.m
 
 ## Videos of datasets:
-- [KITTI](https://www.youtube.com/...)
-- [Malaga](https://www.youtube.com/...)
-- [Parking](https://www.youtube.com/...)
-- [Walking (own)](https://www.youtube.com/...)
+- [KITTI](https://youtu.be/5besGTteSaU)
+- [Malaga]( https://youtu.be/tz77heKUBBE)
+- [Parking](https://youtu.be/SbBriyLgZg0)
+- [Walking (own)](Part 1: https://youtu.be/IumEqt9J7Uo, ...
+                  Part 2: https://youtu.be/kZDZKcieDFQ)
 
 ### Specifications of machine on which screencasts were captured:
-- OS:
-- Max. number of threads:
-- CPU Freq.:
-- RAM: 
+- OS: MacBook Pro (13-inch, 2018, Four Thunderbolt 3 Ports)
+- Max. number of threads: 1
+- CPU Freq.: 2.7 GHz Quad-Core Intel Core i7
+- RAM: 16 GB 2133 MHz LPDDR3
 
 ## Needed Toolboxes:
-- MATLAB_R2021b
+- MATLAB_R2020b
 - Computer Vision Toolbox
 - Statistics and Machine Learning Toolbox
