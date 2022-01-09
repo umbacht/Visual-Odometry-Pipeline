@@ -41,7 +41,7 @@ if ds == 0 % KITTI
     parameter.MaxBidirectionalError_cont = 0.7;
     parameter.NumPyramidLevels_cont = 6;
     parameter.BlockSize_cont = [31 31];
-    parameter.MaxIterations_cont = 50;
+    parameter.MaxIterations_cont = 100;
     % Triangulation of new landmarks
     % PointTracker
     parameter.MaxBidirectionalError_triang = 0.7;
@@ -63,7 +63,7 @@ if ds == 0 % KITTI
     % New keypoints
     parameter.num_keypoints = 500;
     parameter.threshold = 5; %Minimum distance to previous
-    parameter.angle_threshold = 3/180*pi; % Bearing angle threshold
+    parameter.angle_threshold = 1.5/180*pi; % Bearing angle threshold
     parameter.max_distance = 500;
 
 
@@ -160,7 +160,7 @@ elseif ds == 2 % PARKING
     % New keypoints
     parameter.num_keypoints = 500;
     parameter.threshold = 15; %Minimum distance to previous
-    parameter.angle_threshold = 10/180*pi; % Bearing angle threshold
+    parameter.angle_threshold = 3/180*pi; % Bearing angle threshold
     parameter.max_distance = 200;
 
 

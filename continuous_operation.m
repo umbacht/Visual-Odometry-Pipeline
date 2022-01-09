@@ -40,34 +40,49 @@ tracked_landmarks_crt = landmarks_prv(point_validity,:);
 % Get valid tracked points in prv image
 tracked_keypoints_prv = keypoints_prv(point_validity,:);
 release(pointTracker);
+
+%%
+% intrinsics = cameraIntrinsics([parameter.K(1,1),parameter.K(2,2)],parameter.K(1:2,3)',[1226,370]);
+% 
+% [R_C_W,t_C_W,inliersIndex] = estimateWorldCameraPose(...
+%      tracked_keypoints_crt,tracked_landmarks_crt,intrinsics, 'MaxNumTrials',2000, 'Confidence', 90, 'MaxReprojectionError', 1);
+
+% tracked_landmarks_crt = tracked_landmarks_crt(tracked_landmarks_crt(:,3)>0, :);
+% tracked_keypoints_crt = tracked_keypoints_crt(tracked_landmarks_crt(:,3)>0, :);
+
+[R_C_W, t_C_W, inliersIndex, max_num_inliers_history, num_iteration_history] = ...
+    ransacLocalization(fliplr(tracked_keypoints_crt)', tracked_landmarks_crt', parameter.K);
     
 %% Estimate Fundamental Matrix from matching keypoints using RANSAC
 
 % Normalise points
-[tracked_keypoints_prv_norm, T1] = normalise2dpts([tracked_keypoints_prv'; ...
-    ones(1,length(tracked_keypoints_prv))]);
-[tracked_keypoints_crt_norm, T2] = normalise2dpts([tracked_keypoints_crt'; ...
-    ones(1,length(tracked_keypoints_crt))]);
+% [tracked_keypoints_prv_norm, T1] = normalise2dpts([tracked_keypoints_prv'; ...
+%     ones(1,length(tracked_keypoints_prv))]);
+% [tracked_keypoints_crt_norm, T2] = normalise2dpts([tracked_keypoints_crt'; ...
+%     ones(1,length(tracked_keypoints_crt))]);
 
-[F_hat, inliersIndex] = estimateFundamentalMatrix(tracked_keypoints_prv_norm(1:2,:)', ...
-    tracked_keypoints_crt_norm(1:2,:)', 'Method',parameter.method, ...
-    'NumTrials', parameter.NumTrials, ...
-    'DistanceThreshold', parameter.DistanceThreshold);
-F_hat = T2.'* F_hat * T1; 
-E = parameter.K'*F_hat*parameter.K;
-[Rots,u3] = decomposeEssentialMatrix(E);
-
-% Decompose and disambiguate transformation, and triangulate landmarks.
-p1 = [tracked_keypoints_prv(inliersIndex,:)'; ones(1,length(tracked_keypoints_prv(inliersIndex,:)))];
-p2 = [tracked_keypoints_crt(inliersIndex,:)'; ones(1,length(tracked_keypoints_crt(inliersIndex,:)))];
-[R,t] = disambiguateRelativePose(Rots,u3,p1,p2,parameter.K,parameter.K);
+% [F_hat, inliersIndex] = estimateFundamentalMatrix(tracked_keypoints_prv_norm(1:2,:)', ...
+%     tracked_keypoints_crt_norm(1:2,:)', 'Method',parameter.method, ...
+%     'NumTrials', parameter.NumTrials, ...
+%     'DistanceThreshold', parameter.DistanceThreshold);
+% F_hat = T2.'* F_hat * T1; 
+% E = parameter.K'*F_hat*parameter.K;
+% [Rots,u3] = decomposeEssentialMatrix(E);
+% 
+% % Decompose and disambiguate transformation, and triangulate landmarks.
+% p1 = [tracked_keypoints_prv(inliersIndex,:)'; ones(1,length(tracked_keypoints_prv(inliersIndex,:)))];
+% p2 = [tracked_keypoints_crt(inliersIndex,:)'; ones(1,length(tracked_keypoints_crt(inliersIndex,:)))];
+% [R,t] = disambiguateRelativePose(Rots,u3,p1,p2,parameter.K,parameter.K);
 
 %% Build current state
 % Transformation from previous pose to current pose
-T_imgprv_imgcrt = [R', -R'*t];
-T_imgprv_imgcrt = [T_imgprv_imgcrt; 0 0 0 1];
+% T_imgprv_imgcrt = [R', -R'*t];
+% T_imgprv_imgcrt = [T_imgprv_imgcrt; 0 0 0 1];
 % Camera pose in world coordinates
-T_WC_crt = T_WC_prv * T_imgprv_imgcrt;
+% T_WC_crt = T_WC_prv * T_imgprv_imgcrt;
+
+T_WC_crt = [R_C_W', -R_C_W'*t_C_W ; 0 0 0 1];
+% T_WC_crt = [R_C_W, t_C_W' ; 0 0 0 1];
 S_crt.P = tracked_keypoints_crt(inliersIndex,:);
 S_crt.X = tracked_landmarks_crt(inliersIndex,:);
 
